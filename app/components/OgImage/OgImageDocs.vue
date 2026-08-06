@@ -63,7 +63,9 @@ const sectionId = 0
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-center bg-[#020420] relative overflow-hidden">
+  <!-- <div class="w-full h-full flex flex-col justify-center bg-[#020420] relative overflow-hidden"> -->
+  <div class="w-[1200px] h-[630px] flex flex-col justify-center px-20 bg-[#020420] relative overflow-hidden">
+    <!-- THIE LIGHT SHINING FROM THE UPPER RIGHT CORNER -->
     <svg
       class="absolute right-0 top-0"
       width="629"
@@ -105,6 +107,7 @@ const sectionId = 0
         </filter>
       </defs>
     </svg>
+    <!-- CROSS ON THE RIGHT SIDE - TEXT ON THE LEFT SIDE -->
     <div class="absolute -right-6 top-10 opacity-[0.07] text-[#00DC82]">
       <svg
         width="480"
@@ -115,7 +118,8 @@ const sectionId = 0
         <path d="M11 2h2v5h5v2h-5v13h-2V9H6V7h5V2z" />
       </svg>
     </div>
-    <div class="absolute left-0 bottom-0">
+    <!--  QR CODE IMAGE -->
+    <div class="absolute left-12 bottom-12 z-10">
       <!-- https://www.qrcode-monkey.com/ Foreground Color: #020420 -->
       <svg
         id="Layer_1"

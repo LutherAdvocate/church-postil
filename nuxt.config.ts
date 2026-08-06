@@ -59,7 +59,7 @@ export default defineNuxtConfig({
     // 3. Fallback: Your production domain.
     url: import.meta.dev
       ? 'http://localhost:3000'
-      : (process.env.NUXT_PUBLIC_SITE_URL || 'https://your-production-domain.com')
+      : (process.env.NUXT_PUBLIC_SITE_URL || 'https://church-postil.vercel.app')
   },
 
   content: {
@@ -88,7 +88,7 @@ export default defineNuxtConfig({
     public: {
       siteUrl: import.meta.dev
         ? 'http://localhost:3000'
-        : (process.env.NUXT_PUBLIC_SITE_URL || 'https://your-production-domain.com'),
+        : (process.env.NUXT_PUBLIC_SITE_URL || 'https://church-postil.vercel.app'),
       apiBase: process.env.NUXT_PUBLIC_API_BASE
         || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
     }
@@ -127,7 +127,7 @@ export default defineNuxtConfig({
   },
 
   devServer: {
-    https: true,
+    https: false,
     host: '0.0.0.0'
   },
 
