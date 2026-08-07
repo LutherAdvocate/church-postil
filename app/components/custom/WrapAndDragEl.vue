@@ -69,7 +69,7 @@ onMounted(async () => {
 <style scoped>
 .movable-wrapper {
   position: fixed;
-  z-index: 9999;
+  /* z-index: 9999; */
   /* Ensure no other positioning properties exist */
   top: 0;
   left: 0;

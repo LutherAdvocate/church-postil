@@ -742,7 +742,7 @@ const openImageEditorWithNote = (note) => {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1000;
+  /* z-index: 1000; */
 }
 
 .note-item {
@@ -785,7 +785,7 @@ https://gemini.google.com/share/3eb27e378047
 /* Ensure the button is reachable */
 .pencil-btn {
   pointer-events: auto !important;
-  z-index: 2100; /* Higher than the glass */
+  /* z-index: 2100; */ /* Higher than the glass */
 }
 
 /* Ensure the highlight box doesn't block the handles while selection is active */
