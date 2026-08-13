@@ -9,6 +9,7 @@ import LZString from 'lz-string'
 const { toc } = useAppConfig()
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
+//b// @ts-expect-error - Suppresses error if it exists, warns you if the line is actually correct
 definePageMeta({
   layout: 'docs',
   scrollToTop: false

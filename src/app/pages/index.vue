@@ -10,8 +10,27 @@ const { data: page } = await useAsyncData(
     .first()
 )
 
+// 👇 ADD THESE LOG LINES HERE TO AUDIT THE RESULT
+console.log('--- CONTENT DEBUGGER ---')
+console.log('Current Locale:', locale.value)
+console.log('Target Query Path:', `/${locale.value}/`)
+console.log('Database Result Found:', page.value)
+console.log('------------------------')
+
+// if (!page.value) {  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: false }) }
+
 if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: false })
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page data returned null from database',
+    fatal: false,
+    // 💡 This injects real runtime data into the error block
+    data: {
+      searchedLocale: locale.value,
+      expectedQueryPath: `/${locale.value}/index`,
+      tip: 'Check your content folder names inside src/app/content/'
+    }
+  })
 }
 
 const title = page.value.seo?.title || page.value.title
