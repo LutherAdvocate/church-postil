@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD033 -->
-# 🔗[Church Postil](https://church-postil.vercel.app)
+# [Church Postil](https://church-postil.vercel.app) 🔗
 
 Click on the badge to open [![Luther's Church Postil](https://img.shields.io/badge/luthers-church_postil-brightgreen?style=for-the-badge)](https://church-postil.vercel.app)
 
