@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD033 -->
-# [Church Postil](https://church-postil.vercel.app) 🔗
+# [Church Postil](https://church-postil.vercel.app) 🌐
 
 Click on the badge to open [![Luther's Church Postil](https://img.shields.io/badge/luthers-church_postil-brightgreen?style=for-the-badge)](https://church-postil.vercel.app)
 
@@ -32,5 +32,7 @@ All sermons are stored in MD-format, inside the [content](https://github.com/Lut
 
 - English in [content/en](https://github.com/LutherAdvocate/church-postil/tree/main/content/en), and
 - Danish in [content/da](https://github.com/LutherAdvocate/church-postil/tree/main/content/da).
+
+<small>(With a GitHub account, you can easily copy everything!)</small>
 
 </details>
