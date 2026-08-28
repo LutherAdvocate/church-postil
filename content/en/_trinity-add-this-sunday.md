@@ -1,14 +1,4 @@
----
-title: Trinity II Postil (13.-26.Sun.)
-description: Sermons from 13 - 26.Sunday after Trinity
-source: https://archive.org/details/Wellesley_College_Library?tab=collection&query=precioussacredwr09luth+OR+precioussacredwr14luth&sort=publicdate
-navigation:
-  icon: i-heroicons-beaker
----
-
-::note
-Summer Postil
-::
+# First heading
 
 ## Thirteenth Sunday after Trinity; Gal 3: 15-22
 
