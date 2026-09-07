@@ -56,6 +56,12 @@ export default defineNuxtConfig({
       : (process.env.NUXT_PUBLIC_SITE_URL || 'https://church-postil.vercel.app')
   },
 
+   llms: {
+    domain: 'https://church-postil.vercel.app/',
+    title: 'Luther\'s Church Postil',
+    description: 'The study version of Luther\'s Epistles and Sermons in the Church Postil',
+  },
+
   content: {
     database: {
       type: 'sqlite',
@@ -159,6 +165,9 @@ export default defineNuxtConfig({
     build: {
       chunkSizeWarningLimit: 1000 // Set the limit to 1000 KiB
     }
+  },
+  icon: {
+    fallbackToApi: false // Prevents it from shouting if it can't find an icon online
   },
 
   typescript: {
