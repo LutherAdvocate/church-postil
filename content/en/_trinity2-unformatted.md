@@ -1,9 +1,8 @@
 ---
+navigation: false
 title: Trinity II Postil (13.-26.Sun.)
 description: 13.Sunday after Trinity - 26.Sunday after Trinity
 source: https://archive.org/details/Wellesley_College_Library?tab=collection&query=precioussacredwr09luth+OR+precioussacredwr14luth&sort=publicdate
-navigation:
-  icon: i-heroicons-beaker
 ---
 
 Part six (Trinity II) of Luther's Church postil is coming soon

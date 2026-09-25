@@ -176,7 +176,7 @@ const toggleLang = () => {
         <ClientOnly>
           <UButton
             title="Toggle Language"
-            :icon="isLang ? 'i-fluent-local-language-24-filled' : 'i-ix-language-filled'"
+            :icon="isLang ? 'lucide:whole-word' : 'lucide:languages'"
             square
             color="neutral"
             variant="ghost"

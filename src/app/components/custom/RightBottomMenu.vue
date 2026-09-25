@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import * as locales from '@nuxt/ui/locale'
 import { useWindowScroll, useWindowSize } from '@vueuse/core'
 import type { DropdownMenuItem } from '@nuxt/ui'
+import { computed, nextTick } from '#imports'
 
 const toast = useToast()
 
@@ -359,7 +360,7 @@ const noteGroups = computed(() => [
       description: note.path || '',
       suffix: note.path || note.title,
       title: `..${note.path} \n${note.title} \n${note.text} \n${$localeDate(note.id)}`,
-      icon: 'i-heroicons-pencil-square',
+      icon: 'i-lucide:panel-left-close',
       // What happens when you click the note in the palette:
       onSelect: () => {
         goToNote(note) // router.push(note.path) // `${note.path}#note-${note.id}`
@@ -377,7 +378,7 @@ const noteGroups = computed(() => [
             {
               id: 'toggle-desc',
               label: showDescriptions.value ? 'Hide Path to Note' : 'Show Path to Note',
-              icon: 'i-heroicons-eye',
+              icon: showDescriptions.value ? 'i-lucide:eye-off' : 'i-lucide:eye',
               onSelect: () => { showDescriptions.value = !showDescriptions.value }
             }
           ]
@@ -398,68 +399,87 @@ const goToNote = (note) => {
 /* ------------------- NOTE ACTIONS MENU ---------------------- */
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const noteActions = ref<DropdownMenuItem[][]>([
+const noteActions = computed(() => [
   [
     {
       id: 'into-clipboard',
       label: 'Copy to Clipboard',
+      icon: 'i-lucide:copy',
       title: 'Copy Notes to Clipboard and manually past them anywhere',
-      icon: 'i-lucide-copy',
-      onSelect: () => handleCopyAndGmail(false)
+      onSelect(e: Event) {
+        e.preventDefault()
+        handleCopyAndGmail(false)
+      }
     },
     {
-      id: 'into-clipboard',
+      id: 'into-gmail',
       label: 'Copy/Paste to Gmail',
+      icon: 'i-lucide:clipboard-copy',
       title: 'Copy Notes to Clipboard and open Gmail - Past it manually into Gmail',
-      icon: 'i-lucide-clipboard-copy',
-      onSelect: () => handleCopyAndGmail(true)
+      onSelect(e: Event) {
+        e.preventDefault()
+        handleCopyAndGmail(true)
+      }
     },
     {
       id: 'gmail-notes',
       label: 'Export to Gmail (PC)',
+      icon: 'i-lucide:mail-open',
       title: 'Export Notes automatically to Gmail - ONLY ON PC!',
-      icon: 'i-simple-icons-gmail',
-      onSelect: () => handleCopyToGmaiAsDraft()
+      onSelect(e: Event) {
+        e.preventDefault()
+        handleCopyToGmaiAsDraft()
+      }
     },
     {
       id: 'md-notes',
       label: 'Open Md Notes',
+      icon: 'i-lucide:notepad-text',
       title: 'Open notes in md format!',
-      icon: 'i-lucide-notepad-text',
-      onSelect: () => mdNotes()
+      onSelect(e: Event) {
+        e.preventDefault()
+        mdNotes()
+      }
     },
     {
       id: 'styled-notes',
       label: 'Print Notes',
+      icon: 'i-lucide:newspaper',
       title: 'Print Styled notes!',
-      icon: 'i-heroicons-printer',
-      onSelect: () => styledNotes()
+      onSelect(e: Event) {
+        e.preventDefault()
+        styledNotes()
+      }
     }
   ],
-
   [
     {
       id: 'download-notes',
       label: 'Download Notes',
+      icon: 'i-lucide:hard-drive-download',
       title: 'Download Md notes!',
-      icon: 'i-lucide-hard-drive-download',
-      onSelect: () => downloadNotes()
+      onSelect(e: Event) {
+        e.preventDefault()
+        downloadNotes()
+      }
     },
     {
       id: 'backup-notes',
       label: 'Backup JSON',
+      icon: 'i-lucide:archive',
       title: 'Backup JSON data!',
-      icon: 'i-mdi-code-json',
-      onSelect: () => backupJson()
+      onSelect(e: Event) {
+        e.preventDefault()
+        backupJson()
+      }
     },
     {
       id: 'import-notes',
       label: 'Import Notes',
+      icon: 'i-lucide:import',
       title: 'Import Notes from backup',
-      icon: 'i-lucide-import',
-      // onSelect: event => importNotes(event)
-      onSelect: () => {
-        // This "clicks" the hidden file input when the dropdown item is picked
+      onSelect(e: Event) {
+        e.preventDefault()
         nextTick(() => fileInput.value?.click())
       }
     }
@@ -468,11 +488,14 @@ const noteActions = ref<DropdownMenuItem[][]>([
     {
       id: 'toggle-desc',
       label: showDescriptions.value ? 'Hide Path to Note' : 'Show Path to Note',
-      icon: 'i-heroicons-eye',
-      onSelect: () => { showDescriptions.value = !showDescriptions.value }
+      icon: showDescriptions.value ? 'i-lucide:list-indent-decrease' : 'i-lucide:list-indent-increase',
+      onSelect(e: Event) {
+        e.preventDefault()
+        showDescriptions.value = !showDescriptions.value
+      }
     }
   ]
-])
+] satisfies DropdownMenuItem[][])
 
 /* NOTE ACTION IMPORT NOTES */
 // The state that controls the "Action Menu"
@@ -534,6 +557,11 @@ const openImageEditor = (allNotes) => {
     d: allNotes.length === 0 ? 'Create note bobbles with double click anywhere and open them here to edit and share Luther quotes and notes.' : 'All notes (note bobbles or highlighted text) can be found in the select menu in the top of this window. Select one to edit and share!'
   })
 }
+
+const openHeaderMenu = () => {
+  $keyboardClickM()
+  cpOpen.value = false
+}
 </script>
 
 <template>
@@ -563,7 +591,7 @@ const openImageEditor = (allNotes) => {
         >
           <!-- <template #anchor> -->
           <UButton
-            :icon="movableMenuOpen ? 'i-iconamoon-close-bold' : 'i-iconamoon-menu-kebab-vertical-bold'"
+            :icon="movableMenuOpen ? 'i-lucide:chevron-down' : 'i-lucide:chevron-up'"
             :color="movableMenuOpen ? 'secondary' : 'secondary'"
             variant="outline"
             :title="movableMenuOpen ? 'Close Menu' : 'Open Menu'"
@@ -580,7 +608,7 @@ const openImageEditor = (allNotes) => {
               <div class="w-8">
                 <UButton
                   title="Back to Top"
-                  icon="i-heroicons-arrow-up-solid"
+                  icon="i-lucide:arrow-up-to-line"
                   square
                   color="secondary"
                   variant="ghost"
@@ -590,7 +618,7 @@ const openImageEditor = (allNotes) => {
                 />
                 <UButton
                   title="Toggle Language"
-                  :icon="isLang ? 'i-fluent-local-language-24-filled' : 'i-ix-language-filled'"
+                  :icon="isLang ? 'i-lucide:whole-word' : 'i-lucide:languages'"
                   color="secondary"
                   square
                   variant="ghost"
@@ -608,7 +636,7 @@ const openImageEditor = (allNotes) => {
                     color="secondary"
                     square
                     variant="subtle"
-                    icon="i-lucide-edit"
+                    icon="i-lucide:edit"
                     @click="openImageEditor(allNotes)"
                   />
                 </UChip>
@@ -632,7 +660,7 @@ const openImageEditor = (allNotes) => {
                     color="secondary"
                     square
                     variant="subtle"
-                    icon="i-boxicons-menu-notification-filled"
+                    icon="i-lucide:menu"
                   />
                 </UChip>
                 <template #body>
@@ -671,7 +699,7 @@ const openImageEditor = (allNotes) => {
                             class="space-y-3"
                           >
                             <UIcon
-                              name="i-heroicons-pencil-square"
+                              name="i-lucide:folder-pen"
                               class="w-10 h-10 mx-auto text-gray-400 opacity-50"
                             />
                             <p class="text-sm text-gray-500">
@@ -691,7 +719,7 @@ const openImageEditor = (allNotes) => {
                             class="space-y-3"
                           >
                             <UIcon
-                              name="i-heroicons-magnifying-glass"
+                              name="i-lucide:search-alert"
                               class="w-10 h-10 mx-auto text-gray-400 opacity-50"
                             />
                             <p class="text-sm text-gray-500">
@@ -717,7 +745,7 @@ const openImageEditor = (allNotes) => {
                         <div class="sticky bottom-0 flex items-center justify-between gap-2 w-full">
                           <UDropdownMenu :items="noteActions">
                             <UButton
-                              icon="heroicons-pencil-square"
+                              icon="i-lucide:ellipsis-vertical"
                               label="Note Actions"
                               size="xs"
                               variant="ghost"
@@ -732,7 +760,7 @@ const openImageEditor = (allNotes) => {
 
                           <UButton
                             color="warning"
-                            icon="i-lucide-square-menu"
+                            icon="i-lucide:square-menu"
                             variant="ghost"
                             label="Search"
                             size="xs"
@@ -746,11 +774,11 @@ const openImageEditor = (allNotes) => {
 
                           <UButton
                             color="secondary"
-                            icon="i-lucide-menu"
+                            icon="i-lucide:menu"
                             variant="ghost"
                             label="Menu"
                             size="xs"
-                            @click="$keyboardClickM"
+                            @click="openHeaderMenu"
                           />
 
                           <USeparator
@@ -760,7 +788,7 @@ const openImageEditor = (allNotes) => {
 
                           <UButton
                             color="neutral"
-                            icon="i-heroicons-x-mark"
+                            icon="i-lucide:circle-x"
                             variant="ghost"
                             label=""
                             size="xs"

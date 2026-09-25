@@ -44,7 +44,7 @@ export const useClipboard = () => {
       toast.add({
         title: 'Copied to Clipboard!',
         description: toGmail ? 'Opening Gmail... just paste your notes.' : 'Paste the Notes from Clip board, manually!',
-        icon: 'i-heroicons-clipboard-document-check'
+        icon: 'i-heroicons:clipboard-document-check'
       })
       if (!toGmail) return
       // Open Gmail after a short delay

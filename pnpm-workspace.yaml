@@ -1,0 +1,17 @@
+# pnpm-workspace.yaml
+nodeLinker: hoisted
+shamefullyHoist: true
+
+packages:
+  - '.'
+
+allowBuilds:
+  sharp: true
+  '@parcel/watcher': false
+  '@tailwindcss/oxide': false
+  esbuild: false
+  unrs-resolver: false
+  vue-demi: false
+  better-sqlite3: false
+minimumReleaseAgeExclude:
+  - '@iconify-json/vscode-icons@1.2.81'

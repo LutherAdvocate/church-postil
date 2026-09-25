@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Analytics } from '@vercel/analytics/nuxt'
 import { useI18n } from 'vue-i18n'
+// OPTION A: Explicit and type-safe (Recommended)
 import * as locales from '@nuxt/ui/locale'
 
 const { locale } = useI18n()

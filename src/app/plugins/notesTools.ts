@@ -46,7 +46,7 @@ export default defineNuxtPlugin(() => {
         toast.add({
           title: 'Copied to Clipboard!',
           description: 'Opening Gmail... just paste your notes.',
-          icon: 'i-heroicons-clipboard-document-check'
+          icon: 'i-heroicons:clipboard-document-check'
         })
 
         // Open Gmail after a short delay

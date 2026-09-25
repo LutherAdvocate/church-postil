@@ -83,17 +83,17 @@ export default defineAppConfig({
     credits: `@LawyerKyrie • © ${new Date().getFullYear()}`,
     colorMode: false,
     links: [{
-      'icon': 'i-simple-icons-discord',
+      'icon': 'i-lucide:message-square',
       'to': 'https://go.nuxt.com/discord',
       'target': '_blank',
       'aria-label': 'Nuxt on Discord'
     }, {
-      'icon': 'i-simple-icons-x',
+      'icon': 'i-lucide:twitter',
       'to': 'https://go.nuxt.com/x',
       'target': '_blank',
       'aria-label': 'Nuxt on X'
     }, {
-      'icon': 'i-simple-icons-github',
+      'icon': 'i-lucide:github',
       'to': 'https://github.com/LawyerKyrie/church-postil/',
       'target': '_blank',
       'aria-label': 'Church Postil on GitHub'
@@ -105,12 +105,12 @@ export default defineAppConfig({
       title: 'Community',
       edit: 'https://github.com/LawyerKyrie/church-postil/edit/main/content',
       links: [{
-        icon: 'i-lucide-star',
+        icon: 'i-lucide:star',
         label: 'Star on GitHub',
         to: 'https://github.com/LawyerKyrie/church-postil',
         target: '_blank'
       }, {
-        icon: 'i-lucide-book-open',
+        icon: 'i-lucide:book-open',
         label: 'Church Postil Docs',
         to: 'https://github.com/LawyerKyrie/church-postil',
         target: '_blank'

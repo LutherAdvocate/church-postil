@@ -24,10 +24,10 @@ Luthers [Kirke Postille]{.text-primary}
   :::u-button
   ---
   title: Klikk eller åbne søge meny med Ctrl K (keyboard-klikk)
-  icon: i-lucide-square-menu
+  icon: i-lucide:square-menu
   size: xl
   to: javascript:window.nuxt.$keyboardClickK();void(0);
-  trailing-icon: i-lucide-arrow-right
+  trailing-icon: i-lucide:arrow-right
 
   ---
   Søge
@@ -36,12 +36,12 @@ Luthers [Kirke Postille]{.text-primary}
   :::u-button
   ---
   title: Klikk eller åbne meny med M (keyboard-klikk)
-  icon: i-lucide-menu
+  icon: i-lucide:menu
   color: neutral
   variant: outline
   size: xl
   to: javascript:window.nuxt.$keyboardClickM();void(0);
-  trailing-icon: i-lucide-arrow-right
+  trailing-icon: i-lucide:arrow-right
 
   ---
   Meny

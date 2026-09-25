@@ -122,7 +122,7 @@ const getPostil = () => {
 const daItems = [
   {
     label: 'Digital kilde referanse',
-    icon: 'i-lucide-library',
+    icon: 'i-lucide:library',
     class: '',
     content: '&nbsp;'
       + 'Digitalisert/ oversatt av _Finn B.Andersen_.\n'
@@ -132,7 +132,7 @@ const daItems = [
   },
   {
     label: 'Historisk info - Kirke Postil',
-    icon: 'i-lucide-church',
+    icon: 'i-lucide:church',
     class: '',
     content: '&nbsp;'
       + '**Original værk:**\n'
@@ -167,7 +167,7 @@ const enItems = [
   },
   {
     label: 'Digital Source - USA Library',
-    icon: 'i-lucide-library',
+    icon: 'i-lucide:library',
     class: '',
     content: '&nbsp;'
       + 'Digitized to pdf/txt etc. by _Wellesley College Library_.\n'
@@ -179,7 +179,7 @@ const enItems = [
   },
   {
     label: 'Historical info - Church Postil',
-    icon: 'i-lucide-church',
+    icon: 'i-lucide:church',
     class: '',
     content: '&nbsp;'
       + '**Original Work:**\n'

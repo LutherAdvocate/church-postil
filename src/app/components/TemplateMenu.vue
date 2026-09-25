@@ -48,7 +48,7 @@
     <UButton
       label="More"
       variant="subtle"
-      trailing-icon="i-lucide-chevron-down"
+      trailing-icon="i-lucide:chevron-down"
       size="xs"
       class="-mb-[6px] font-semibold rounded-full truncate"
       :class="[open && 'bg-primary/15']"

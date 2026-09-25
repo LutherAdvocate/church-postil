@@ -25,10 +25,10 @@ Luther's [Church Postil]{.text-primary}
   :::u-button
   ---
   title: Click opens the Search Menu, or Ctrl K (keyboard-click)
-  icon: i-lucide-square-menu
+  icon: i-lucide:square-menu
   size: xl
   to: javascript:window.nuxt.$keyboardClickK();void(0);
-  trailing-icon: i-lucide-arrow-right
+  trailing-icon: i-lucide:arrow-right
 
   ---
   Search
@@ -37,12 +37,12 @@ Luther's [Church Postil]{.text-primary}
   :::u-button
   ---
   title: Click opens the Menu, or M (Keyboard-click)
-  icon: i-lucide-menu
+  icon: i-lucide:menu
   color: neutral
   variant: outline
   size: xl
   to: javascript:window.nuxt.$keyboardClickM();void(0);
-  trailing-icon: i-lucide-arrow-right
+  trailing-icon: i-lucide:arrow-right
 
   ---
   Menu

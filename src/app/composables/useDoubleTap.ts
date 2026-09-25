@@ -9,7 +9,7 @@ export function useDoubleTap(delay = 300) {
     // const timeStamp = useTimeStamp()
 
     // Get current coordinates
-    let curX = 0, curY = 0
+    let curX, curY // curX = 0, curY = 0
     if ('touches' in event) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const touch = (event as TouchEvent).changedTouches[0] as any

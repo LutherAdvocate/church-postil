@@ -4,21 +4,23 @@ import { useClipboard } from '@vueuse/core'
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
-const site = useSiteConfig()
+const config = useRuntimeConfig() // const site = useSiteConfig()
 
-const mdPath = computed(() => `${site.url}/raw${route.path}.md`)
-
+const mdPath = computed(() => {
+  const baseUrl = config.public.siteUrl || 'http://localhost:3000'
+  return `${baseUrl}/raw${route.path}.md`
+})
 const items = [
   {
     label: 'Highlight & Notes',
     title: 'Guide to making notes and highlight text',
-    icon: 'i-lucide-notebook-pen',
+    icon: 'i-lucide:notebook-pen',
     onSelect() {
       navigateTo({
         path: '/da/notes'
       })
       toast.add({
-        icon: 'i-lucide-notebook-pen',
+        icon: 'i-lucide:notebook-pen',
         title: 'Double Click add Notes!',
         description: 'Add Notes with double click, and read it later on the same device.'
       })
@@ -26,17 +28,18 @@ const items = [
   },
   {
     label: 'View as Markdown',
-    icon: 'i-simple-icons:markdown',
+    icon: 'i-lucide:book-open-text',
     target: '_blank',
-    to: `/raw${route.path}.md`
+    to: import.meta.server ? '#' : `/raw${route.path}.md`,
+    prefetch: false
   },
   {
     label: 'Copy Page Content',
-    icon: copied ? 'i-lucide-copy-check' : 'i-lucide-copy',
+    icon: copied ? 'i-lucide:copy-check' : 'i-lucide:copy',
     onSelect() {
       copyPage()
       toast.add({
-        icon: 'i-lucide-check-circle',
+        icon: 'i-lucide:check-circle',
         title: 'Page Content Copied',
         description: 'Copy/paste it where you want!'
       })
@@ -44,10 +47,10 @@ const items = [
   },
   {
     label: 'Download MD-file',
-    icon: 'i-lucide-hard-drive-download',
+    icon: 'i-lucide:hard-drive-download',
     onSelect() {
       toast.add({
-        icon: 'i-lucide-hard-drive-download',
+        icon: 'i-lucide:hard-drive-download',
         title: 'Downloading file to',
         description: '../downloads/church-postil-md-file-download'
       })
@@ -56,22 +59,23 @@ const items = [
   },
   {
     label: 'Copy MD link',
-    icon: 'i-lucide-link',
+    icon: 'i-lucide:link',
     onSelect() {
       copy(mdPath.value)
       toast.add({
-        icon: 'i-lucide-check-circle',
+        icon: 'i-lucide:check-circle',
         title: 'Page Copied to clipboard'
       })
-    }
+    },
+    prefetch: false
   } /* ,
   {
     label: 'Create Accordions',
     title: 'Create Accordion Style - Collapse all Headers',
-    icon: 'i-lucide-list-collapse',
+    icon: 'i-lucide:list-collapse',
     onSelect() {
       toast.add({
-        icon: 'i-lucide-list-collapse',
+        icon: 'i-lucide:list-collapse',
         title: 'Under construction!',
         description: 'This programming isn\'t finished yet!'
 
@@ -93,7 +97,7 @@ const { $downloadFile } = useNuxtApp() as any
   <UFieldGroup>
     <UButton
       label="Study Tools"
-      :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
+      :icon="copied ? 'i-lucide:copy-check' : 'i-lucide:copy'"
       color="neutral"
       variant="outline"
       :ui="{
@@ -113,7 +117,7 @@ const { $downloadFile } = useNuxtApp() as any
       }"
     >
       <UButton
-        icon="i-lucide-chevron-down"
+        icon="i-lucide:chevron-down"
         size="sm"
         color="neutral"
         variant="outline"

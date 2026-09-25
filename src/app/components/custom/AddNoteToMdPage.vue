@@ -496,7 +496,7 @@ const copyToClipboard = () => {
   toast.add({
     title: 'Copied Text!',
     description: 'Clipboard has captured the text!',
-    icon: 'i-heroicons-clipboard-document-check'
+    icon: 'i-heroicons:clipboard-document-check'
   })
   selection?.removeAllRanges()
 }
@@ -558,7 +558,7 @@ const sharePageLinkWithQuote = async (note) => {
     toast.add({
       title: 'Page Link Copied!',
       description: 'Ready to paste in your browser.',
-      icon: 'i-heroicons-clipboard-document-check'
+      icon: 'i-heroicons:clipboard-document-check'
     })
   }
 }
@@ -594,7 +594,7 @@ const openImageEditorWithNote = (note) => {
           <UButtonGroup orientation="horizontal"
           -->
           <UButton
-            icon="i-heroicons-check"
+            icon="i-heroicons:check"
             title="Highlight the selected text!"
             label="Highlight"
             size="xs"
@@ -603,7 +603,7 @@ const openImageEditorWithNote = (note) => {
           />
 
           <UButton
-            :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-clipboard-copy'"
+            :icon="copied ? 'i-lucide:copy-check' : 'i-lucide:clipboard-copy'"
             title="Copy the selected text!"
             label="Copy"
             size="xs"
@@ -612,7 +612,7 @@ const openImageEditorWithNote = (note) => {
           />
 
           <UButton
-            icon="i-heroicons-x-mark"
+            icon="i-heroicons:x-mark"
             title="Cancel the selected text!"
             color="neutral"
             size="xs"
@@ -642,7 +642,7 @@ const openImageEditorWithNote = (note) => {
           <div class="pointer-events-auto relative">
             <UButton
               v-if="!note.isHighlight"
-              icon="i-heroicons-chat-bubble-left-ellipsis"
+              icon="i-heroicons:chat-bubble-left-ellipsis"
               size="xs"
               class="touch-none rounded-full shadow-md translate-x-[-50%] translate-y-[-100%]"
               @pointerdown.stop="startDragging($event, note)"
@@ -660,7 +660,7 @@ const openImageEditorWithNote = (note) => {
               />
               <!--  <UButton :ref="(el) => pencilLogger(el, note)" ... -->
               <UButton
-                icon="i-heroicons-pencil"
+                icon="i-heroicons:pencil"
                 variant="ghost"
                 size="xs"
                 color="neutral"
@@ -692,7 +692,7 @@ const openImageEditorWithNote = (note) => {
 
             <div class="flex justify-between gap-2 pt-2">
               <UButton
-                icon="i-heroicons-trash"
+                icon="i-heroicons:trash"
                 color="warning"
                 variant="ghost"
                 size="xs"
@@ -701,7 +701,7 @@ const openImageEditorWithNote = (note) => {
               />
 
               <UButton
-                :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-link'"
+                :icon="copied ? 'i-lucide:copy-check' : 'i-lucide:link'"
                 color="neutral"
                 variant="ghost"
                 size="xs"
@@ -711,7 +711,7 @@ const openImageEditorWithNote = (note) => {
               />
 
               <UButton
-                icon="i-heroicons-share"
+                icon="i-heroicons:share"
                 color="neutral"
                 variant="ghost"
                 size="xs"
@@ -722,7 +722,7 @@ const openImageEditorWithNote = (note) => {
               <!-- source shareImage: https://gemini.google.com/share/562c07ced3fa  -->
 
               <UButton
-                icon="i-heroicons-check"
+                icon="i-heroicons:check"
                 color="primary"
                 size="xs"
                 label=""

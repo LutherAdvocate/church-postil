@@ -1,9 +1,9 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 // source loading and saving json with id and files: https://gemini.google.com/share/1f70050d441f
+import { useI18n } from 'vue-i18n'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageHeadline } from '@nuxt/content/utils'
-import { useI18n } from 'vue-i18n'
 import LZString from 'lz-string'
 
 const { toc } = useAppConfig()
@@ -88,13 +88,13 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-defineOgImageComponent(imageData.value.layout, {
-// We send ONLY these three. No more z or s.
+defineOgImage({
+  component: imageData.value.layout, 
+  props: {
   h: sData?.h || imageData.value.content.h || headline,
   t: sData?.t || imageData.value.content.t || page.value.title,
   d: sData?.d || imageData.value.content.d || page.value.description,
-
-  z: route.query.z // The unzipping of direct image have to be done in og-image modules
+  z: route.query.z } // The unzipping of direct image have to be done in og-image modules
   // v: 1.5 // Keep the cache buster!
 })
 
@@ -110,7 +110,7 @@ const links = computed(() => {
   // Now we safely use page.value because we checked it above
   if (toc?.bottom?.edit) {
     result.push({
-      icon: 'i-lucide-external-link',
+      icon: 'i-lucide:external-link',
       label: 'Edit this page',
       to: `${toc.bottom.edit}/${page.value.stem}.${page.value.extension}`,
       target: '_blank'

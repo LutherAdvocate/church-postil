@@ -27,7 +27,7 @@ const actions = ref([
     title="“Ctrl k” or Click Opens "
     :actions="actions"
     close
-    close-icon="i-lucide-x-circle"
+    close-icon="i-lucide:x-circle"
     class="flex justify-center"
     @click="handleActionClick"
   />

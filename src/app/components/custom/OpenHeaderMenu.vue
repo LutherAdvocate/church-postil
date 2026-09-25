@@ -1,101 +1,115 @@
 <script setup lang="ts">
+// compoents/custom/OpenHeaderMenu.vue
 import { useI18n } from 'vue-i18n'
 import * as locales from '@nuxt/ui/locale'
 import type { AccordionItem, TabsItem } from '@nuxt/ui'
 import { findPageChildren } from '@nuxt/content/utils'
-// import { nextTick } from 'vue'
 
-const { path } = useRoute()
+const route = useRoute()
+const router = useRouter()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { $toggleLanguageOnMainPages } = useNuxtApp() as any
 const { getPagePath } = useOppositeLanguage()
 const { locale } = useI18n()
 const uiLocale = computed(() => locales[locale.value as keyof typeof locales])
-const oldLocale = locale.value // updating it on close click
+const oldLocale = locale.value 
 const openMenu = useOpenMenu()
 const pageId = usePageId()
 
-watch(openMenu, (/* newValue, oldValue */) => {
+/// 1. Keep track of the language state reactively
+// const currentLocaleState = ref(locale.value) // extracting the locale value from route.path
+
+watch(openMenu, () => {
   if (openMenu.value === false) {
     if (oldLocale !== locale.value) {
       toast.add({ title: `${uiLocale.value.name} Translated Page`, description: '' })
-      if (pageId !== null && pageId.value.length === 4) {
-        // Grab your data from JSON
-        const targetPath = getPagePath(pageId.value, locale.value)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const [path, hash] = targetPath.split('#') as any
-        const isHash = hash !== undefined
+      
+      // 🚨 Fix 1: Identify if we are actively sitting on a document/note root page
+      const isDocRootPage = route.path.endsWith('/note') || route.path.endsWith('/intro')
+      
+      // 🚨 Fix 2: Check if we are sitting strictly on a bare language index landing zone
+      const isLandingIndexPage = route.path === '/' || route.path === '/da' || route.path === '/en'
 
-        if (isHash) {
-          urlHash.value = hash
-          navigateTo({
-            path: path,
-            hash: `#${hash || undefined}`, // `#${hash}`
-            // This is your "message" to the router
-            state: { skipHistoryScroll: true }
-          })
-        } else {
-          router.push(path)
+      // 🌟 STEP 1: Handled in the first IF statement to manage index pages explicitly
+      if (isLandingIndexPage) {
+        // Handle transitions strictly for index landing zones here if needed, 
+        // or let it pass gracefully.
+      } 
+      // 🌟 STEP 2: Explicitly intercept and PREVENT any redirection for da/note or da/intro
+      else if (isDocRootPage) {
+        // Do absolutely nothing. It breaks out of the loop and locks the page open!
+        return
+      } 
+      // 🌟 STEP 3: The original sermon engine handles the 6 main hash pages safely inside the ELSE statement
+      else { 
+        if (pageId !== null && pageId.value && pageId?.value.length === 4) {
+          const targetPath = getPagePath(pageId.value, locale.value)
+          const [pathStr, hash] = targetPath.split('#')
+          const isHash = hash !== undefined
+
+          if (isHash) {
+            urlHash.value = hash
+            navigateTo({
+              path: pathStr,
+              hash: `#${hash || undefined}`,
+              state: { skipHistoryScroll: true }
+            })
+          } else {
+            router.push(pathStr)
+          }
+        } else { // no pageId
+          // Runs your important hash redirection engine for the 6 main sermon pages!
+          // !route.path.includes('/note') && $toggleLanguageOnMainPages(locale.value)
+          if (!route.path.includes('/note'))
+            $toggleLanguageOnMainPages(locale.value)
         }
-      } else { // no pageId
-        $toggleLanguageOnMainPages(locale.value)
       }
     }
   }
-  // console.log(`Global variable "openMenu" was changed from "${oldValue}" to "${newValue}"`)
 })
 
-// const toggleMenu = () => { openMenu.value = !openMenu.value }
-
 /* <!-- Tabs for toggle of language --> */
-
 const tabs: TabsItem[] = [
-  {
-    label: 'English',
-    icon: 'i-iconoir-language',
-    slot: 'en',
-    value: 'en'
-  },
-  {
-    label: 'Danish',
-    icon: 'i-lucide-languages',
-    slot: 'da',
-    value: 'da'
-  }
+  { label: 'English', icon: 'i-lucide:whole-word', slot: 'en', value: 'en' },
+  { label: 'Danish', icon: 'i-lucide:languages', slot: 'da', value: 'da' }
 ]
 
-// 1. Read the locale value and set the correct tab active
 const activeTab = ref(locale.value === 'en' ? 'en' : 'da')
 
-// 2. Watch the activeTab variable for changes
 watch(activeTab, (newTabValue: string, oldTabValue) => {
-  // Optional: check if the new value is different from the old one before running the function
+  console.log('watching activeTab')
   if (newTabValue !== oldTabValue) {
+    console.log('watching activeTab inside IF')
     locale.value = newTabValue
     showToast(`Language changed`, `Close the menu to switch lang.`)
   }
 })
 
-// const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 const { data: nav_en } = await useAsyncData('filtered-nav1', () => {
-  return queryCollectionNavigation('docs')
-    .where('path', 'LIKE', '/en/%') // Only include items starting with this path
+  return queryCollectionNavigation('docs').where('path', 'LIKE', '/en/%')
 })
 const { data: nav_da } = await useAsyncData('filtered-nav2', () => {
-  return queryCollectionNavigation('docs')
-    .where('path', 'LIKE', '/da/%') // Only include items starting with this path
+  return queryCollectionNavigation('docs').where('path', 'LIKE', '/da/%')
 })
 
-// filtering away the parent, /en or /da
+// Filtering away the parent, /en or /da
 const localeNavigation = computed(() => {
-  const nav_menu = locale.value === 'en' ? nav_en : nav_da
-  if (!nav_menu.value) return []
+  // 💡 Step 1: Detect the real active language path directly from the route being built
+  const currentUrlLang = route.path.startsWith('/da') ? 'da' : 'en'
+  
+  // Step 2: Grab the matching collection navigation database tree
+  const nav_menu_value = currentUrlLang === 'en' ? nav_en.value : nav_da.value
+  if (!nav_menu_value) return []
 
-  const targetPath = `/${locale.value}`
-  const children = findPageChildren(nav_menu.value, targetPath)
-  return children || nav_menu.value // Fallback or adjust logic
+  // Step 3: Align targetPath with the real language tree being compiled
+  const targetPath = `/${currentUrlLang}`
+  
+  // Pass the clean un-nested navigation collection straight into the parser
+  const children = findPageChildren(nav_menu_value, targetPath)
+  return children || nav_menu_value
 })
+
 
 /* <!-- Select Menu for more alternatives --> */
 type RowCells = {
@@ -104,65 +118,59 @@ type RowCells = {
   tags: string
   label: string
   bible: string
-  // value: string
   type: never
-  icon: string // creates one tab on sermons
+  icon: string 
   description: string
 }
 
-const router = useRouter()
 const urlHash = useUrlHash()
+const selectMenu = ref(false)
 
-const lang = path.startsWith('/da') ? 'da' : 'en'
-// 1. Construct the URL as a plain string first
-// 2. Add the query manually to the string to avoid the 'query' property error
-const fetchUrl = computed(() => `/api/${lang}`)
+const lang = computed(() => route.path.startsWith('/da') ? 'da' : 'en')
+const fetchUrl = computed(() => `/api/${lang.value}`)
 
+console.log('STARING OPENHEADERMENU')
 const { data: sermons } = await useFetch<RowCells[]>(
-  fetchUrl.value, // `/api/${locale.value}
+  () => fetchUrl.value, 
   {
-    key: `api-select-menu-${path}}`, // ${Math.random()
-    transform: (
-      data
-    ) => {
-      return data
-        ?.map(sermon => ({
-          ...sermon,
-          label: `${sermon.label} - ${sermon.bible === undefined ? '' : sermon.bible}`,
-          icon: sermon.icon === undefined ? '&nbsp;' : sermon.icon, // This creates a tab on sermons
-          tooltip: `${sermon.label} - ${sermon.bible === undefined ? '' : sermon.bible}`,
-          onSelect: () => {
-            showToast(`${sermon.label} selected`, `Sermon opens in a new window`)
-
-            const targetPath = getPagePath(sermon.id, locale.value)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const [path, hash] = targetPath.split('#') as any
-            console.log('hash? ', hash)
-            const isHash = hash !== undefined
-
-            if (isHash) {
-              console.log('isHash navigateTo ...')
-              urlHash.value = hash
-              navigateTo({
-                path: path,
-                hash: `#${hash || undefined}`, // `#${hash}`
-                // This is your "message" to the router
-                state: { skipHistoryScroll: true }
-              })
-            } else {
-              console.log('router.push(path) running')
-              router.push(path)
-            }
-            /*
-            navigateTo(`${getPagePath(sermon.id, locale.value)}`, {
-              external: false
-              open: {
-                target: '_blank',
-                windowFeatures: { width: 800, height: 600 }
-              }
-            }) */
+    // Fix 1: Static data-cache key based on target language instead of volatile dynamic path
+    key: `api-select-menu-data-${lang.value}`, 
+    transform: (data) => {
+      return data?.map(sermon => ({
+        ...sermon,
+        label: `${sermon.label} - ${sermon.bible || ''}`,
+        icon: sermon.icon || '&nbsp;', 
+        tooltip: `${sermon.label} - ${sermon.bible || ''}`,
+        // Fix 3: Accept the event parameter context cleanly
+        onSelect: (e: Event) => {
+          // 💡 Command the pnpm v12 server pass to completely skip this block at build time:
+          if (e) {
+            e.preventDefault()
+            e.stopPropagation()
           }
-        }))
+          
+          showToast(`${sermon.label} selected`, `Sermon opens in a new window`)
+          
+          // Explicitly shut the dropdown modal down right away before moving
+          selectMenu.value = false
+          openMenu.value = false
+
+          const targetPath = getPagePath(sermon.id, locale.value)
+          const [targetUrlPath, hash] = targetPath.split('#')
+          const isHash = hash !== undefined
+
+          if (isHash) {
+            urlHash.value = hash
+            navigateTo({
+              path: targetUrlPath,
+              hash: `#${hash}`,
+              state: { skipHistoryScroll: true }
+            })
+          } else {
+            router.push(targetUrlPath)
+          }
+        }
+      }))
     },
     server: true,
     lazy: false
@@ -170,67 +178,52 @@ const { data: sermons } = await useFetch<RowCells[]>(
 )
 
 const toast = useToast()
-function showToast(title, description) {
+function showToast(title: string, description: string) {
   toast.add({
-    title: title,
-    description: description,
-    icon: 'i-lucide-wifi',
-    close: {
-      color: 'secondary',
-      variant: 'outline',
-      class: 'rounded-full'
-    }
+    title,
+    description,
+    icon: 'i-lucide:wifi',
+    close: { color: 'secondary', variant: 'outline', class: 'rounded-full' }
   })
 }
 
 const footerMenuAccordion = ref<AccordionItem[]>([
-  {
-    label: 'About Luther\'s Church Postil',
-    icon: 'i-iconoir-church'
-  }
+  { label: 'About Luther\'s Church Postil', icon: 'i-iconoir-church' }
 ])
 const footerMenuAccordionTabs = ref<TabsItem[]>([
   {
     label: 'Languages',
-    icon: 'i-lucide-toggle-right',
-    content: `
-      Toggle between English and Danish version of Luther's Church Postil.
-    `
+    icon: 'i-lucide:toggle-right',
+    content: `Toggle between English and Danish version of Luther's Church Postil.`
   },
   {
     label: 'About',
-    icon: 'i-lucide-file-question-mark',
-    content: `
-      - Double click or highlight text to add notes. Share them or view them trough the movable pop up menu in the bottom right corner.
-    `
+    icon: 'i-lucide:file-question-mark',
+    content: `- Double click or highlight text to add notes. Share them or view them through the movable pop up menu.`
   }
 ])
 
-/* Open the UContentNavigation where it was last open */
 const openedPaths = useState('nav-persistent-state', () => [])
 
-const whenSelectMenuOpens = (/* el: any */) => {
+const whenSelectMenuOpens = () => {
   document.addEventListener('mousedown', handleSelectMenuInputFocus)
 }
 
-const selectMenu = ref(false)
-
 const handleSelectMenuInputFocus = (event: MouseEvent) => {
   if (selectMenu.value === false) return
-  // Element in Select Menu was clicked. Checking if it was input field...
   const target = event.target as HTMLInputElement
-  // Check if the clicked element is our specific search input
   if (target && target.placeholder === 'Filter Sermons...') {
-    // 1. Remove the read-only state to allow typing
     target.readOnly = false
-    target.focus() // Ensure it stays focused after the flip
+    target.focus()
   }
 }
 
-watch(selectMenu, async (newValue/* , oldValue */) => {
-  if (newValue === false)
+watch(selectMenu, (newValue) => {
+  if (newValue === false) {
     document.removeEventListener('mousedown', handleSelectMenuInputFocus)
+  }
 })
+// Source: https://mail.google.com/mail/u/0/?tab=rm&ogbl#drafts?compose=lLtBPchzQqbPFGfkgqdjLjnTHXTrKvWcSNSzPTFwbhldJXtZVDlmKdmFhlNFtQBmxwvNDgzl
 </script>
 
 <template>
@@ -241,13 +234,13 @@ watch(selectMenu, async (newValue/* , oldValue */) => {
         :ref="whenSelectMenuOpens"
         v-model:open="selectMenu"
         :placeholder="`${locale === 'en' ? 'Sermons Luther\'s Church Postil' : 'Prædikener Luthers Postiller'}`"
-        icon="i-lucide-search"
-        trailing-icon="i-lucide-arrow-down"
+        icon="i-lucide:search"
+        trailing-icon="i-lucide:arrow-down"
         :items="sermons"
         :search-input="{
           id: 'selectMenuInputFilter',
           placeholder: `${locale === 'en' ? 'Filter Sermons...' : 'Filtrer Prædikener...'}`,
-          icon: 'i-lucide-search',
+          icon: 'i-lucide:search',
           readonly: true
         }"
         :ui="{/* input: '[&>input]:cursor-pointer' */ }"
@@ -283,7 +276,7 @@ watch(selectMenu, async (newValue/* , oldValue */) => {
           class="pl-2.5"
         >
           <UIcon
-            name="i-mdi-learn"
+            name="i-heroicons:academic-cap-20-solid"
             class="size-5"
           />
           Userguide: How to create notes?

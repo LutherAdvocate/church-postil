@@ -11,13 +11,13 @@ const editorItems = [
   {
     label: '1. Live Preview',
     title: 'Collapse the Live Preview and view the edit options!',
-    icon: 'i-heroicons-eye',
+    icon: 'i-heroicons:eye',
     slot: 'preview'
   },
   {
     label: '2. Edit Quote',
     title: 'Collapse the Edit of headline, title and/or description',
-    icon: 'i-heroicons-pencil-square',
+    icon: 'i-heroicons:pencil-square',
     slot: 'edit'
   }
 ]
@@ -230,7 +230,7 @@ const noteItems = computed(() => {
     // The main text shown in the list
     label: `${quotesApostrophes(note.text) + ' | ' + note.title}` || 'No note here!',
     description: note.path || '',
-    icon: 'i-heroicons-pencil-square',
+    icon: 'i-heroicons:pencil-square',
     // Keep the metadata for tooltips or custom slots
     title: `..${note.path} \n${note.title} \n${note.text} \n${$localeDate(note.id)}`,
     // Define the action directly on the item
@@ -275,10 +275,10 @@ function onNoteSelect(item) {
           :search-input="{
             id: 'selectMenuInputFilter',
             placeholder: allNotes.length > 0 ? 'Filter Highligh & Notes...' : 'Created notes can be selected her...',
-            icon: 'i-lucide-search',
+            icon: 'i-lucide:search',
             readonly: true
           }"
-          icon="i-lucide-circle-check"
+          icon="i-lucide:circle-check"
           by="id"
           class="w-full px-2"
           @update:model-value="onNoteSelect"
@@ -327,7 +327,7 @@ function onNoteSelect(item) {
 
               <div class="flex items-center gap-1">
                 <UButton
-                  :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-clipboard-copy'"
+                  :icon="copied ? 'i-lucide:copy-check' : 'i-lucide:clipboard-copy'"
                   title="Create Post - Copy/past text & links of image & source to post!"
                   color="primary"
                   variant="ghost"
@@ -336,7 +336,7 @@ function onNoteSelect(item) {
                 />
 
                 <UButton
-                  :icon="copied ? 'i-lucide-copy-check' : 'i-heroicons-share'"
+                  :icon="copied ? 'i-lucide:copy-check' : 'i-heroicons:share'"
                   title="Copy/ past Image Url (link)!"
                   color="primary"
                   variant="ghost"
@@ -345,7 +345,7 @@ function onNoteSelect(item) {
                 />
 
                 <UButton
-                  icon="i-heroicons-magnifying-glass-plus"
+                  icon="i-heroicons:magnifying-glass-plus"
                   title="Full view of share image!"
                   color="primary"
                   variant="ghost"
@@ -478,7 +478,7 @@ function onNoteSelect(item) {
       >
         <UButton
           title="Create Post: Copy/ past text, image and link to a post etc."
-          :trailing-icon="copied ? 'i-lucide-copy-check' : 'i-lucide-clipboard-copy'"
+          :trailing-icon="copied ? 'i-lucide:copy-check' : 'i-lucide:clipboard-copy'"
           color="neutral"
           variant="outline"
           class="flex-1 py-2 flex flex-col items-center justify-center gap-1 border-r border-gray-200 dark:border-gray-800"
@@ -491,7 +491,7 @@ function onNoteSelect(item) {
 
         <UButton
           title="Share - Get URL (Link) to the Image"
-          :trailing-icon="copied ? 'i-lucide-copy-check' : 'i-heroicons-share'"
+          :trailing-icon="copied ? 'i-lucide:copy-check' : 'i-heroicons:share'"
           color="primary"
           class="flex-1 py-2 flex flex-col items-center justify-center gap-1"
           @click="shareUrlOfZipImage"

@@ -1,18 +1,19 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import { upperFirst } from 'scule'
-import type { TableColumn } from '@nuxt/ui'
-import type { Column, Row, SortingFn } from '@tanstack/vue-table'
-import { useClipboard, useWindowSize /* , useLocalStorage */ } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
+import { h, resolveComponent } from 'vue'
+import type { TableColumn } from '@nuxt/ui'
+import type {/* Column, Row, */ SortFn } from '@tanstack/vue-table' // 
+import { useClipboard, useWindowSize /* , useLocalStorage */ } from '@vueuse/core'
 
 const { locale } = useI18n()
-const { path } = useRoute()
 // Construct the full URL using our helper
 
 const props = defineProps({
-  postil: String
+  postil: {
+    type: String,
+    required: true
+  }
 })
 
 type RowItems = {
@@ -26,21 +27,26 @@ type RowItems = {
   description: string
 }
 
+const route = useRoute()
+
 const fetchUrl = computed(() => {
-  // 1. Your existing logic to determine which API file/folder to hit
-  const lang = path.startsWith('/da') ? 'da' : 'en'
+  // 💡 THE SINGLE LINE FIX: Use route.path directly to ensure perfect reactivity!
+  const currentPath = route.path
+
+  const lang = currentPath.startsWith('/da') ? 'da' : 'en'
 
   let targetPath = ''
-  if (path.includes('uddrag')) {
-    targetPath = path.slice(1) // e.g., "da/uddrag"
-  } else if (path.includes('test')) {
-    targetPath = path.slice(1) // e.g., en/testfile
+  if (currentPath.includes('uddrag')) {
+    targetPath = currentPath.slice(1) // e.g., "da/uddrag"
+  } else if (currentPath.includes('test')) {
+    targetPath = currentPath.slice(1) // e.g., "en/testfile"
   } else {
     targetPath = lang // e.g., "en"
   }
-  // 2. Wrap it in the helper to add the Domain on the Server
-  // This produces: http://localhost:3000/api/da/uddrag (on Server)
-  // or: /api/da/uddrag (on Client)
+
+  if (import.meta.server) {
+    return `/api/${targetPath}`
+  }
   return useApiUrl(`api/${targetPath}`)
 })
 
@@ -87,8 +93,7 @@ const BOOK_ORDER: Record<string, number> = {
 
 type BibleBook = keyof typeof BOOK_ORDER
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tanstackBibleSort: SortingFn<any> = (rowA, rowB, colName) => {
+const tanstackBibleSort: SortFn<unknown, RowItems> = (rowA, rowB, colName) => {
   const matchObjVal = (raw) => {
     const str = String(raw || '').toLowerCase().trim()
     // This regex looks for: (Book Name) (Chapter):(Verse)
@@ -152,7 +157,7 @@ const columns: TableColumn<RowItems>[] = [
   },
   {
     accessorKey: 'bible',
-    sortingFn: tanstackBibleSort,
+    sortingFn: tanstackBibleSort as any,
     header: ({ column }) => getTableHeader(column, 'Bible Txt'),
     cell: ({ row }) => `${row.getValue('bible')}`
   }, /*
@@ -178,7 +183,7 @@ const columns: TableColumn<RowItems>[] = [
           },
           () =>
             h(UButton, {
-              'icon': 'i-lucide-ellipsis-vertical',
+              'icon': 'i-lucide:ellipsis-vertical',
               'title': 'Open Sermon Menu',
               'color': 'neutral',
               'variant': 'ghost',
@@ -208,7 +213,7 @@ const postilMapping = [
 
 // 1. Define the logic in a clear, reusable function
 const getInitialFilter = () => {
-  const currentSlug = path.slice(4) as string // route.params.slug
+  const currentSlug = route.path.slice(4) as string // route.params.slug
 
   // Find the object where the slug matches the start of the filename
   const match = postilMapping.find(item => currentSlug.startsWith(item.slug))
@@ -260,14 +265,14 @@ onMounted(() => {
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
-function getTableHeader(column: Column<RowItems>, label: string) {
+function getTableHeader(column: any, label: string) {
   const isSorted = column.getIsSorted()
 
   return h(UButton, {
     color: 'neutral',
     variant: 'ghost',
     label: label,
-    icon: isSorted ? (isSorted === 'asc' ? 'i-lucide-arrow-up-narrow-wide' : 'i-lucide-arrow-down-wide-narrow') : 'i-lucide-arrow-up-down',
+    icon: isSorted ? (isSorted === 'asc' ? 'i-lucide:arrow-up-narrow-wide' : 'i-lucide:arrow-down-wide-narrow') : 'i-lucide:arrow-up-down',
     class: '-mx-2.5',
     onClick: () => column.toggleSorting() // column.toggleSorting(column.getIsSorted() === 'asc')
   })
@@ -294,11 +299,11 @@ const getPathFromId = (pageId) => {
   return targetPath
 }
 
-function getRowItems(row: Row<RowItems>) {
+function getRowItems(row: any) {
   return [
     {
       label: 'Open Sermon',
-      icon: 'i-lucide-link',
+      icon: 'i-lucide:link',
       onSelect() {
         navigateTo(`${getPathFromId(row.original.id)}`, {
           external: false /* ,
@@ -310,7 +315,7 @@ function getRowItems(row: Row<RowItems>) {
     },
     {
       label: 'New PC Tab',
-      icon: 'i-lucide-link',
+      icon: 'i-lucide:link',
       onSelect() {
         navigateTo(`${getPathFromId(row.original.id)}`, {
           external: true,
@@ -326,14 +331,14 @@ function getRowItems(row: Row<RowItems>) {
     },
     {
       label: 'Share Link',
-      icon: 'i-lucide-copy',
+      icon: 'i-lucide:copy',
       onSelect() {
         copy(currentOrigin.value + getPathFromId(row.original.id))
 
         toast.add({
           title: 'Link Copied!',
           color: 'success',
-          icon: 'i-lucide-circle-check'
+          icon: 'i-lucide:circle-check'
         })
       }
     },
@@ -524,7 +529,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
       <div class="px-4 py-3.5 border-b border-accented">
         <UInput
           v-model="globalFilter"
-          icon="i-lucide-search"
+          icon="i-lucide:search"
           class="max-w-md"
           placeholder="Filter Sermons..."
         />
@@ -537,7 +542,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
               ?.getAllColumns()
               .filter((column) => column.getCanHide())
               .map((column) => ({
-                label: upperFirst(column.id),
+                label: column.id.charAt(0).toUpperCase() + column.id.slice(1),
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {
@@ -554,7 +559,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
             label="View"
             color="neutral"
             variant="outline"
-            trailing-icon="i-lucide-chevron-down"
+            trailing-icon="i-lucide:chevron-down"
           />
         </UDropdownMenu>
       </div>
@@ -582,7 +587,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
           :clear="{
             color: 'neutral',
             size: 'xl',
-            icon: 'i-lucide-arrow-left',
+            icon: 'i-lucide:arrow-left',
             class: 'rounded-full'
           }"
           :error="{
@@ -659,7 +664,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
                         <UButton
                           color="neutral"
                           variant="ghost"
-                          icon="i-lucide-x"
+                          icon="i-lucide:x"
                           class="justify-end"
                           @click="close"
                         />
@@ -689,7 +694,7 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
                     title="Open Luther's Sermon"
                     size="xs"
                     variant="outline"
-                    trailing-icon="i-lucide-arrow-right"
+                    trailing-icon="i-lucide:arrow-right"
                   />
                 </p>
               </div>
@@ -702,12 +707,12 @@ const isEmpty = computed(() => status.value === 'success' && (!rowItems.value ||
         <ClientOnly>
           {{ rowItems }}
           <UEmpty
-            icon="i-lucide-table"
+            icon="i-lucide:table"
             title="No Rows Found"
             description="Hmm, There is an error loading table rows."
             :actions="[
               {
-                icon: 'i-lucide-refresh-cw',
+                icon: 'i-lucide:refresh-cw',
                 label: 'Refresh',
                 color: 'neutral',
                 variant: 'subtle'

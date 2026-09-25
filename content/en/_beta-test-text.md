@@ -1,4 +1,8 @@
-## ✝️ Welcome to the Luther Hub Workspace Beta
+---
+navigation: false
+---
+
+# ✝️ Welcome to the Luther Hub Workspace Beta
 
 Welcome to a digital workspace designed specifically for historical theological study and sermon preparation.
 

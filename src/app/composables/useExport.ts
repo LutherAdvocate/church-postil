@@ -39,7 +39,7 @@ export const useExport = () => {
       toast.add({
         title: 'Preparing Gmail...',
         description: `Exporting ${totalCount} notes.`,
-        icon: 'i-heroicons-envelope'
+        icon: 'i-heroicons:envelope'
       })
 
       // 3. Open in a new tab

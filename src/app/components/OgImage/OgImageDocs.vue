@@ -11,49 +11,48 @@ const props = defineProps<{
   z?: string
 }>()
 
-const h = computed(() => {
-  // 1. If there is a 'z' in the URL (Direct Image Request),
-  // UNPACK IT INTERNALLY. Do not trust the props!
+// 1. Single central decompression container with detailed error logging
+const unpackedData = computed(() => {
   const directZ = props.z || route.query.z
-  if (directZ) {
-    try {
-      const unpacked = JSON.parse(LZString.decompressFromEncodedURIComponent(directZ as string))
-      if (unpacked.h) return unpacked.h
-    } catch (e) { console.error('Unzip of s-query failed', e) }
+  
+  // Strict Safety Check: If it's missing, or not a string, exit immediately 
+  // to prevent a 500 build worker crash!
+  if (!directZ || typeof directZ !== 'string' || directZ.trim() === '') {
+    console.log('[OgImage Build Log] No valid payload string present. Skipping decompression.')
+    return null
   }
 
-  // 2. Fallback to the prop (which slug.vue handles for the 's' case)
-  return props.h || 'og-image headline'
+  try {
+    const decompressed = LZString.decompressFromEncodedURIComponent(directZ as string)
+    
+    if (!decompressed) {
+      console.error('[OgImage Error] Decompression returned an empty string. The "z" token might be corrupted or cut off. Raw token length:', directZ.length)
+      return null
+    }
+
+    const parsed = JSON.parse(decompressed)
+    console.log('[OgImage Debug] Successfully unpacked payload data object:', parsed)
+    return parsed
+
+  } catch (error) {
+    console.error('[OgImage Error] Unpack failed during processing cycle.')
+    console.error('- Raw "z" string payload:', directZ)
+    console.error('- Native Parser Error message:', error)
+    return null
+  }
+})
+
+// 2. Clear, lightweight text bindings that read the log container safely
+const h = computed(() => {
+  return unpackedData.value?.h || props.h || 'og-image headline'
 })
 
 const t = computed(() => {
-  // 1. If there is a 'z' in the URL (Direct Image Request),
-  // UNPACK IT INTERNALLY. Do not trust the props!
-  const directZ = props.z || route.query.z
-  if (directZ) {
-    try {
-      const unpacked = JSON.parse(LZString.decompressFromEncodedURIComponent(directZ as string))
-      if (unpacked.t) return unpacked.t
-    } catch (e) { console.error('Unzip of s-query failed', e) }
-  }
-
-  // 2. Fallback to the prop (which slug.vue handles for the 's' case)
-  return props.t || 'og-image title'
+  return unpackedData.value?.t || props.t || 'og-image title'
 })
 
 const d = computed(() => {
-  // 1. If there is a 'z' in the URL (Direct Image Request),
-  // UNPACK IT INTERNALLY. Do not trust the props!
-  const directZ = props.z || route.query.z
-  if (directZ) {
-    try {
-      const unpacked = JSON.parse(LZString.decompressFromEncodedURIComponent(directZ as string))
-      if (unpacked.d) return unpacked.d
-    } catch (e) { console.error('Unzip of s-query failed', e) }
-  }
-
-  // 2. Fallback to the prop (which slug.vue handles for the 's' case)
-  return props.d || 'og-image description'
+  return unpackedData.value?.d || props.d || 'og-image description'
 })
 
 // console.log('--- ISLAND RENDER SUCCESS (Docs) ---')

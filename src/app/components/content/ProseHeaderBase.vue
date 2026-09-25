@@ -96,7 +96,7 @@ const sizes = {
         @click="handleShareClick"
       >
         <UIcon
-          :name="copied ? 'i-lucide-check' : 'i-lucide-share-2'"
+          :name="copied ? 'i-lucide:check' : 'i-lucide:share-2'"
           class="w-[0.6em] h-[0.6em]"
         />
 
