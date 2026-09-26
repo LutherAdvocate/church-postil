@@ -171,6 +171,10 @@ export default defineNuxtConfig({
         '@nuxtjs/mdc > extend'
       ]
     },
+    ssr: {
+      // Forces Vite to compile unhead code directly into the server bundle file
+      noExternal: ['unhead', '@unhead/shared', '@unhead/dom', '@unhead/ssr']
+    }
   },
   icon: {
     // provider: 'iconify',
