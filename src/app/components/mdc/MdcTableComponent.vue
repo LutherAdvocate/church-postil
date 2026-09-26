@@ -3,7 +3,9 @@
 import { useI18n } from 'vue-i18n'
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
-import type {/* Column, Row, */ SortFn } from '@tanstack/vue-table' // 
+// import type { Column, Row } from '@tanstack/vue-table'
+import type { SortFn } from '@tanstack/table-core'
+
 import { useClipboard, useWindowSize /* , useLocalStorage */ } from '@vueuse/core'
 
 const { locale } = useI18n()

@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
+    "@tanstack/table-core": "^9.2.4",
     "@tanstack/vue-table": "^9.2.4",
     "eslint": "^10.11.0",
     "minimark": "^1.0.0",
