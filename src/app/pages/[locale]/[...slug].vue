@@ -96,7 +96,7 @@ defineOgImage({
   d: sData?.d || imageData.value.content.d || page.value.description,
   z: route.query.z } // The unzipping of direct image have to be done in og-image modules
   // v: 1.5 // Keep the cache buster!
-})
+} as any)
 
 // 4. Wrap the logic in a safe Computed block
 const links = computed(() => {
