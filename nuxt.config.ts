@@ -29,9 +29,8 @@ export default defineNuxtConfig({
   // ssr maybe fixing open page in new tab/ windows
   ssr: true,
 
-  devtools: {
-    enabled: true
-  },
+  // devtools: { enabled: true },
+
   app: {
     head: {
       htmlAttrs: {
@@ -58,8 +57,10 @@ export default defineNuxtConfig({
 
   content: {
     database: {
-      type: 'sqlite',
-      filename: '/tmp/content.cache.db' // './.nuxt/content.cache.db'
+      type: 'libsql', // sqlite is using filename instead of url
+      url: process.env.NODE_ENV === 'production'
+        ? 'file:/tmp/content.cache.db'         // Writable folder path required by Vercel
+        : 'file:.nuxt/content.cache.db'       // Offline storage path for local Windows development
     },
     experimental: {
       nativeSqlite: true,
@@ -124,7 +125,10 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-07-11',
 
-  // ogImage: { zeroRuntime: true },
+  ogImage: {
+    // zeroRuntime: true 
+    enabled: true // process.env.NODE_ENV === 'production'
+  },
 
   nitro: {
     preset: 'vercel',
@@ -150,7 +154,6 @@ export default defineNuxtConfig({
     build: {
       chunkSizeWarningLimit: 1000 // Set the limit to 1000 KiB
     },
-    /*
     optimizeDeps: {
       exclude: [
         '@nuxtjs/mdc > remark-gfm',
@@ -165,7 +168,6 @@ export default defineNuxtConfig({
         '@nuxtjs/mdc > extend'
       ]
     },
-    */
   },
   icon: {
     // provider: 'iconify',
@@ -183,12 +185,12 @@ export default defineNuxtConfig({
   typescript: {
     shim: false,
     strict: false,
-    typeCheck: true,
+    typeCheck: true /*,
     tsConfig: {
       compilerOptions: {
         types: ["nuxt", "vite/client"]
       }
-    }
+    } */
   },
 
   future: {

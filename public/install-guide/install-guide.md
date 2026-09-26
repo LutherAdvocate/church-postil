@@ -121,3 +121,21 @@ rm -rf .nuxt .output .nitro
 # Run your production build layout
 pnpm build
 ```
+
+## The Deep Cleanup Command Sequence
+
+```bash
+# 1. Force-kill any node or watcher processes locking your files
+taskkill //F //IM node.exe
+
+# 2. Forcefully remove all build caches and node_modules folders
+rm -rf .nuxt .output node_modules pnpm-lock.yaml
+
+# 3. Purge pnpm's internal global virtual cache store
+pnpm store prune
+
+# 4. Perform a fresh local installation with your restored package versions
+pnpm install
+pnpm nuxi prepare
+
+```

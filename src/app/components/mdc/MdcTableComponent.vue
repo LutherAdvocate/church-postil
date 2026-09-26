@@ -10,15 +10,13 @@ const { locale } = useI18n()
 // Construct the full URL using our helper
 
 const props = defineProps({
-  postil: {
-    type: String,
-    required: true
-  }
+  // eslint-disable-next-line vue/require-default-prop
+  postil: String
 })
 
 type RowItems = {
   id: string
-  postil: string
+  postil?: string
   tags: string
   label: string
   bible: string
