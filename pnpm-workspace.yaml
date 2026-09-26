@@ -26,3 +26,7 @@ supportedArchitectures:
   cpu:
     - current
     - x64
+
+# The new canonical location for pnpm v12 overrides
+overrides:
+  "@tanstack/vue-table": "^8.11.2"
