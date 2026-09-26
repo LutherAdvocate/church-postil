@@ -59,7 +59,7 @@ export default defineNuxtConfig({
     database: {
       type: 'libsql', // sqlite is using filename instead of url
       url: process.env.NODE_ENV === 'production'
-        ? 'file:/tmp/content.cache.db'         // Writable folder path required by Vercel
+        ? 'libsql://:memory:'         // Writable folder path required by Vercel
         : 'file:.nuxt/content.cache.db'       // Offline storage path for local Windows development
     },
     experimental: {
