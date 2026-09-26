@@ -129,7 +129,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-07-11',
 
   ogImage: {
-    // zeroRuntime: true 
+    zeroRuntime: true,
     enabled: true // process.env.NODE_ENV === 'production'
   },
 
