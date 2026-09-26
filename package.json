@@ -24,6 +24,7 @@
     "@vercel/analytics": "^1.6.1",
     "@vueuse/core": "^15.0.0",
     "@vueuse/nuxt": "^15.0.0",
+    "better-sqlite3": "^13.0.3",
     "giscus": "^1.6.0",
     "lz-string": "^1.5.0",
     "nuxt": "^4.5.2",

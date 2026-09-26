@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // 1. Put this exact code block at the VERY top of your nuxt.config.ts file
 
@@ -57,10 +58,12 @@ export default defineNuxtConfig({
 
   content: {
     database: {
-      type: 'libsql', // sqlite is using filename instead of url
-      url: process.env.NODE_ENV === 'production'
-        ? 'libsql://:memory:'         // Writable folder path required by Vercel
-        : 'file:.nuxt/content.cache.db'       // Offline storage path for local Windows development
+      // Toggle the database adapter type cleanly based on environment
+      type: process.env.NODE_ENV === 'production' ? 'sqlite' : 'libsql',
+      
+      // Pass both keys safely; the inactive driver option will simply be ignored by Nuxt
+      filename: '/tmp/content.cache.db',
+      url: 'file:.nuxt/content.cache.db'
     },
     experimental: {
       nativeSqlite: true,
