@@ -1,12 +1,18 @@
+# pnpm-workspace.yaml
 nodeLinker: hoisted
 shamefullyHoist: true
 
 packages:
   - '.'
 
+# Move your custom hoist rules out of .npmrc and into camelCase format here:
+publicHoistPattern:
+  - '*unhead*'
+  - '*@unhead*'
+  - 'types.*'
+  - 'eslint.*'
+
 allowBuilds:
-  '@parcel/watcher': false
-  '@tailwindcss/oxide': false
   better-sqlite3: false
   esbuild: true
   sharp: true
