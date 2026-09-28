@@ -2,6 +2,7 @@
 // Source: https://gemini.google.com/share/7b2243e3ed02
 import LZString from 'lz-string'
 import { useClipboard } from '@vueuse/core'
+import { nextTick } from 'vue'
 
 const route = useRoute()
 const { imageData, openEditor } = useImageState()
@@ -220,6 +221,9 @@ const goToNote = (note) => {
   // Ensure the ID is attached so the destination page knows where to look
   const pathWithHash = `${note.path}#note-${note.id}`
   router.push(pathWithHash)
+  /*
+  NB! The scroll to the selected note ONLY works when the selected not is on another path (page).
+  */
   movableMenuOpen.value = false
 }
 
@@ -429,12 +433,12 @@ function onNoteSelect(item) {
         <template #edit>
           <div class="space-y-6 px-4">
             <UFormField
-              title="Headline (Max 29 chars)"
+              title="Headline (Max 31 chars)"
               class="py-0 my-1"
             >
               <UInput
                 v-model="imageData.content.h"
-                maxlength="40"
+                maxlength="45"
                 class="w-full"
               />
             </UFormField>
@@ -443,7 +447,7 @@ function onNoteSelect(item) {
             -->
 
             <UFormField
-              title="Title (Max 60 chars), or parents - if shared header"
+              title="Title (Max 32 chars), or parents - if shared header"
               class="py-0 my-1"
             >
               <UTextarea

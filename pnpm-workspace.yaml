@@ -5,7 +5,6 @@ shamefullyHoist: true
 packages:
   - '.'
 
-# Move your custom hoist rules out of .npmrc and into camelCase format here:
 publicHoistPattern:
   - '*unhead*'
   - '*@unhead*'
@@ -26,7 +25,3 @@ supportedArchitectures:
   cpu:
     - current
     - x64
-
-# The new canonical location for pnpm v12 overrides
-overrides:
-  "@tanstack/vue-table": "^8.11.2"

@@ -591,7 +591,7 @@ const openHeaderMenu = () => {
         >
           <!-- <template #anchor> -->
           <UButton
-            :icon="movableMenuOpen ? 'i-lucide:chevron-down' : 'i-lucide:chevron-up'"
+            :icon="movableMenuOpen ? 'i-lucide:ellipsis' : 'i-lucide:ellipsis-vertical'"
             :color="movableMenuOpen ? 'secondary' : 'secondary'"
             variant="outline"
             :title="movableMenuOpen ? 'Close Menu' : 'Open Menu'"

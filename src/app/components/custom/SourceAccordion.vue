@@ -93,7 +93,7 @@ useHead({
 const sourceAccordion: AccordionItem[] = [
   {
     label: 'Source & Publication History',
-    icon: 'i-wordpress-comment-author-name'
+    icon: 'i-lucide:history'
   }
 ]
 

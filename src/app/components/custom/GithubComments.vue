@@ -19,7 +19,7 @@ const timer = setTimeout(() => {
   >
     <!-- CHANGE THE FOLLOWING DATA ON https://giscus.app/ -->
     <Giscus
-      repo="LawyerKyrie/church-postil"
+      repo="LutherAdvocate/church-postil"
       repo-id="R_kgDOQo1rhg"
       category="Comments"
       category-id="DIC_kwDOQo1rhs4Czz1G"
