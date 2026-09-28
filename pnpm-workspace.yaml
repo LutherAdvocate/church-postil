@@ -8,9 +8,7 @@ packages:
 publicHoistPattern:
   - '*unhead*'
   - '*@unhead*'
-  - '*@tanstack/vue-table*' # Exposes the Vue components
-  - '*@tanstack/table-core*' # CRUCIAL: Exposes the core engine and SortFn types
-  
+  - '*@tanstack/vue-table*'
   - 'types.*'
   - 'eslint.*'
 
@@ -28,3 +26,7 @@ supportedArchitectures:
   cpu:
     - current
     - x64
+
+overrides:
+  # The precise lock that keeps your Vercel deployment stable and aligned with @nuxt/ui
+  "@tanstack/vue-table": "^8.17.3"

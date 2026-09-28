@@ -3,8 +3,8 @@
 import { useI18n } from 'vue-i18n'
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
-// import type { Column, Row } from '@tanstack/vue-table'
-import type { SortFn } from '@tanstack/table-core'
+import type { Column, Row, SortingFn } from '@tanstack/vue-table'
+// import type { SortFn } from '@tanstack/table-core'
 
 import { useClipboard, useWindowSize /* , useLocalStorage */ } from '@vueuse/core'
 
@@ -93,7 +93,7 @@ const BOOK_ORDER: Record<string, number> = {
 
 type BibleBook = keyof typeof BOOK_ORDER
 
-const tanstackBibleSort: SortFn<unknown, RowItems> = (rowA, rowB, colName) => {
+const tanstackBibleSort: SortingFn<RowItems> = (rowA, rowB, colName) => {
   const matchObjVal = (raw) => {
     const str = String(raw || '').toLowerCase().trim()
     // This regex looks for: (Book Name) (Chapter):(Verse)
@@ -265,7 +265,7 @@ onMounted(() => {
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
-function getTableHeader(column: any, label: string) {
+function getTableHeader(column: Column<RowItems>, label: string) {
   const isSorted = column.getIsSorted()
 
   return h(UButton, {
@@ -299,7 +299,7 @@ const getPathFromId = (pageId) => {
   return targetPath
 }
 
-function getRowItems(row: any) {
+function getRowItems(row: Row<RowItems>) {
   return [
     {
       label: 'Open Sermon',

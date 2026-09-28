@@ -157,7 +157,7 @@ export default defineNuxtConfig({
       chunkSizeWarningLimit: 1000 // Set the limit to 1000 KiB
     },
     optimizeDeps: {
-      include: ['@tanstack/vue-table', '@tanstack/table-core'],
+      include: ['@tanstack/vue-table'],
       exclude: [
         '@nuxtjs/mdc > remark-gfm',
         '@nuxtjs/mdc > remark-emoji',
