@@ -2,7 +2,6 @@
 // Source: https://gemini.google.com/share/7b2243e3ed02
 import LZString from 'lz-string'
 import { useClipboard } from '@vueuse/core'
-import { nextTick } from 'vue'
 
 const route = useRoute()
 const { imageData, openEditor } = useImageState()

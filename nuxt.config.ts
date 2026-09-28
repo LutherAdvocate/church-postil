@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // 1. Put this exact code block at the VERY top of your nuxt.config.ts file
 

@@ -8,6 +8,9 @@ packages:
 publicHoistPattern:
   - '*unhead*'
   - '*@unhead*'
+  - '*@tanstack/vue-table*' # Exposes the Vue components
+  - '*@tanstack/table-core*' # CRUCIAL: Exposes the core engine and SortFn types
+  
   - 'types.*'
   - 'eslint.*'
 
