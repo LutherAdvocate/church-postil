@@ -7,7 +7,8 @@ import { useClipboard } from '@vueuse/core'
 
 const props = defineProps<{
   target: HTMLElement | null
-  title: any
+  headline: string
+  urlAsText: string
 }>()
 
 const route = useRoute()
@@ -523,7 +524,7 @@ const toast = useToast()
 
 const sharePageLinkWithQuote = async (note) => {
   const dataToZip = {
-    h: props.title.slice(0, 29),
+    h: props.headline.slice(0, 29),
     t: ctx.title,
     d: note.text.replace(/[«»]/g, '').trim()
   }
@@ -533,7 +534,7 @@ const sharePageLinkWithQuote = async (note) => {
 
   // 3. Build the Image URL
   // We match your width/height logic from openPreview
-  const isMobile = imageData.value.layout === 'Mobile'
+  const isMobile = imageData.value.layout === 'Narrow'
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
@@ -565,8 +566,8 @@ const sharePageLinkWithQuote = async (note) => {
 
 const openImageEditorWithNote = (note) => {
   openEditor({
-    h: props.title.slice(0, 28),
-    t: ctx.title, // The "Parents" go here - if shared header
+    h: ctx.path.startsWith("/en") ? ctx.title : props.headline,
+    t: ctx.path.startsWith("/en") ? props.urlAsText : ctx.title, // The "Parents" go here - if shared header
     d: note.text || 'Note' // The "Clicked Header" goes here - if shared header
   })
 }

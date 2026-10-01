@@ -12,7 +12,7 @@ export const useImageState = () => {
 
   const imageData = useState('og-image-data', () => ({
     showEditor: false,
-    layout: 'Docs',
+    layout: 'Wide',
     // The "Bridge" storage
     pageContext: {
       title: '',
@@ -57,7 +57,7 @@ export const useImageState = () => {
       h: imageData.value.content.h,
       t: imageData.value.content.t,
       d: imageData.value.content.d,
-      l: imageData.value.layout === 'Mobile' ? 'm' : 'w' // m=mobile, w=wide
+      l: imageData.value.layout === 'Narrow' ? 'm' : 'w' // m=narrow, w=wide
     }
 
     // 2. Compress the JSON string

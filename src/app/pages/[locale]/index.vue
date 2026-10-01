@@ -28,6 +28,11 @@ useSeoMeta({
   twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/docs-light.png'
 })
 
+defineOgImage('Root', {
+  title: 'Luther\'s Church Postil',
+  description: 'Luther\'s Best book in the best web-app available on internet per 2026',
+})
+
 /*
 onMounted(() => {
   // Get query parameters from the URL

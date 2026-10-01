@@ -62,14 +62,15 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
   })
 })
 
-const config = useRuntimeConfig() // siteUrl or apiBase
+// const config = useRuntimeConfig() // siteUrl or apiBase
+const site = useSiteConfig() // required for og-image
 
 useSeoMeta({
   // title, // This title comes below the shared image - I don't want to have the same title in image and below it
   ogTitle: route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
   // description,
   ogDescription: route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
-  ogUrl: () => `${config.public.siteUrl}${route.fullPath}` // route.path
+  ogUrl: () => `${site.url}${route.fullPath}` // route.path
   /*
   ogImage: quoteData // isAnchorLink.value
     ? undefined // Let the OG Module handle it otherwise
@@ -88,15 +89,15 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-defineOgImage({
-  component: imageData.value.layout, 
-  props: {
-  h: sData?.h || imageData.value.content.h || headline,
-  t: sData?.t || imageData.value.content.t || page.value.title,
-  d: sData?.d || imageData.value.content.d || page.value.description,
-  z: route.query.z } // The unzipping of direct image have to be done in og-image modules
-  // v: 1.5 // Keep the cache buster!
-} as any)
+const layout = imageData.value.layout === 'Wide' ? 'Wide' : 'Narrow'
+
+defineOgImage(layout, {
+    title: sData?.t || imageData.value.content.t || page.value.title,
+    description: sData?.d || imageData.value.content.d || page.value.description,
+    headline: headline.value, // || sData?.h || imageData.value.content.h || headline.value,
+    zip: route.query.zip || route.params.zip as any
+  }
+)
 
 // 4. Wrap the logic in a safe Computed block
 const links = computed(() => {
@@ -162,7 +163,7 @@ onMounted(() => {
 /* COLLAPSIBLE HANDLER FOR CLICK ETC. ON CONTENT TOC */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { $tocHashArr, $collapsibleToc /* , $activateNoteMenu */ } = useNuxtApp() as any
+const { $tocHashArr, $collapsibleToc, $formatUrl2Text /* , $activateNoteMenu */ } = useNuxtApp() as any
 
 const isTocOpen = ref(false) // Initial state (e.g., closed)
 
@@ -373,12 +374,17 @@ headlineT.value = headline.value
         <ClientOnly>
           <GithubComments />
           <RightBottomMenu />
-          <ImageEditor />
+          <ImageEditor
+            v-if="page"
+            :headline="headlineT"
+            :url-as-text="$formatUrl2Text(route.fullPath)"
+          />
           <AddNoteToMdPage
             v-if="page"
             ref="noteRef"
             :target="pageContainer"
-            :title="headlineT"
+            :headline="headlineT"
+            :url-as-text="$formatUrl2Text(route.fullPath)"
           />
         </ClientOnly>
 

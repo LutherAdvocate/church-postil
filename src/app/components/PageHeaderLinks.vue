@@ -4,10 +4,10 @@ import { useClipboard } from '@vueuse/core'
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
-const config = useRuntimeConfig() // const site = useSiteConfig()
+const site = useSiteConfig()
 
 const mdPath = computed(() => {
-  const baseUrl = config.public.siteUrl || 'http://localhost:3000'
+  const baseUrl = site.url || 'http://localhost:3000'
   return `${baseUrl}/raw${route.path}.md`
 })
 const items = [

@@ -2,18 +2,22 @@
 // https://gemini.google.com/share/940e5681a213
 import LZString from 'lz-string'
 
+console.log('LOG: OgImage Wide.satori loading!')
+
 const route = useRoute()
 
 const props = defineProps<{
-  h?: string
-  t?: string
-  d?: string
-  z?: string
+  title: string
+  description: string
+  headline?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  zip?: any
 }>()
 
 // 1. Single central decompression container with detailed error logging
 const unpackedData = computed(() => {
-  const directZ = props.z || route.query.z
+  // const directZ = props.z || route.query.z
+  const directZ = props.zip || route.params.zip
   
   // Strict Safety Check: If it's missing, or not a string, exit immediately 
   // to prevent a 500 build worker crash!
@@ -44,19 +48,16 @@ const unpackedData = computed(() => {
 
 // 2. Clear, lightweight text bindings that read the log container safely
 const h = computed(() => {
-  return unpackedData.value?.h || props.h || 'og-image headline'
+  return unpackedData.value?.h || props.headline || 'Luther\'s Church Postil'
 })
 
 const t = computed(() => {
-  return unpackedData.value?.t || props.t || 'og-image title'
+  return unpackedData.value?.t || props.title || 'Luther\'s Best Book'
 })
 
 const d = computed(() => {
-  return unpackedData.value?.d || props.d || 'og-image description'
+  return unpackedData.value?.d || props.description || 'Now available on net in the best web app ever!'
 })
-
-// console.log('--- ISLAND RENDER SUCCESS (Mobile) ---')
-// console.log('Props (d): ', props.d, '\n- Expand the log if necessary!')
 </script>
 
 <template>

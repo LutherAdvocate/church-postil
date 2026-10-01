@@ -3,6 +3,11 @@
 import LZString from 'lz-string'
 import { useClipboard } from '@vueuse/core'
 
+const props = defineProps<{
+  headline: string
+  urlAsText: string
+}>()
+
 const route = useRoute()
 const { imageData, openEditor } = useImageState()
 
@@ -39,11 +44,14 @@ const openPreview = () => {
   const t = encodeURIComponent(imageData.value.content.t)
   const d = encodeURIComponent(imageData.value.content.d)
 
-  const isMobile = imageData.value.layout === 'Mobile'
+  const isMobile = imageData.value.layout === 'Narrow'
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
-  // This URL sends the data directly to the Node.js server
-  const url = `/__og-image__/image${route.path}/og.png?h=${h}&t=${t}&d=${d}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+
+  // const url = `/__og-image__/image${route.path}/og.png?h=${h}&t=${t}&d=${d}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+
+  // RENOVATION: Reconstruct the path using comma-separated route segments instead of query parameters
+  const url = `/_og/d/c_${imageData.value.layout},headline_${h},title_${t},description_${d},w_${wx},h_${hy}.png`
 
   window.open(url, '_blank')
 }
@@ -114,11 +122,14 @@ const createPostWithImageAndUrl = async () => {
 
   // 3. Build the Image URL
   // We match your width/height logic from openPreview
-  const isMobile = imageData.value.layout === 'Mobile'
+  const isMobile = imageData.value.layout === 'Narrow'
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
-  const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+  // const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+
+  // RENOVATION: Convert to the modern comma-separated path format, passing 'z' as a path parameter
+  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},z_${z},w_${wx},h_${hy}.png`
 
   // 2. Get the Anchor Link (The "Real" Link for the Reader)
   // const sectionId = getNearestSectionId(currentElement)
@@ -177,7 +188,7 @@ const shareUrlOfZipImage = async () => {
 
   // 3. Build the Image URL
   // We match your width/height logic from openPreview
-  const isMobile = imageData.value.layout === 'Mobile'
+  const isMobile = imageData.value.layout === 'Narrow'
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
@@ -217,7 +228,8 @@ const router = useRouter()
 const movableMenuOpen = ref(false)
 
 const goToNote = (note) => {
-  // Ensure the ID is attached so the destination page knows where to look
+  if (note.path === ctx.path) return
+
   const pathWithHash = `${note.path}#note-${note.id}`
   router.push(pathWithHash)
   /*
@@ -251,8 +263,8 @@ function onNoteSelect(item) {
 
   // You can call your goToNote function directly here
   openEditor({
-    h: ctx.title.slice(0, 28),
-    t: ctx.title, // The "Parents" go here - if shared header
+    h: ctx.path.startsWith("/en") ? ctx.title : props.headline,
+    t: ctx.path.startsWith("/en") ? props.urlAsText : ctx.title, // The "Parents" go here - if shared header
     d: item.label || 'Note' // The "Clicked Header" goes here - if shared header
   })
 }
@@ -323,8 +335,8 @@ function onNoteSelect(item) {
                 v-model="imageData.layout"
                 color="primary"
                 size="lg"
-                :items="['Mobile', 'Docs']"
-                :title="imageData.layout === 'Mobile' ? 'Preview Mobile Image (600x1280)' : 'Preview Docs (1230x600)'"
+                :items="['Narrow', 'Wide']"
+                :title="imageData.layout === 'Narrow' ? 'Preview Narrow Image (600x1280)' : 'Preview Wide Image (1230x600)'"
                 orientation="horizontal"
               />
 
@@ -361,14 +373,14 @@ function onNoteSelect(item) {
             <div
               class="relative w-full flex flex-col justify-center overflow-hidden transition-all duration-500"
               :class="[
-                imageData.layout === 'Mobile' ? 'aspect-[9/16] bg-[#0f172a]' : 'aspect-video bg-[#020420]'
+                imageData.layout === 'Narrow' ? 'aspect-[9/16] bg-[#0f172a]' : 'aspect-video bg-[#020420]'
               ]"
             >
               <div class="absolute -right-10 top-10 opacity-[0.07] text-[#00DC82]" />
 
               <!-- Mobile View -->
               <div
-                v-if="imageData.layout === 'Mobile'"
+                v-if="imageData.layout === 'Narrow'"
                 class="relative z-10 flex flex-col p-6 pt-8 h-full justify-between"
               >
                 <div class="flex flex-col">

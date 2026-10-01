@@ -29,7 +29,9 @@ export default defineNuxtConfig({
   // ssr maybe fixing open page in new tab/ windows
   ssr: true,
 
-  // devtools: { enabled: true },
+  devtools: { 
+    enabled: true
+  },
 
   app: {
     head: {
@@ -47,6 +49,15 @@ export default defineNuxtConfig({
       scrollBehaviorType: 'smooth'
       // hashMode: false
     }
+  },
+
+  site: {
+    // 1. Highest Priority: If we are on localhost, use localhost.
+    // 2. Second Priority: Use your .env variable (for your old code).
+    // 3. Fallback: Your production domain.
+    url: import.meta.dev
+      ? 'http://localhost:3000'
+      : (process.env.NUXT_PUBLIC_SITE_URL || 'https://church-postil.vercel.app')
   },
 
   llms: {
@@ -127,19 +138,17 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-07-11',
 
+  // ogImage: { enabled: true // process.env.NODE_ENV === 'production'  },
   ogImage: {
-    zeroRuntime: true,
-    enabled: true // process.env.NODE_ENV === 'production'
+    security: {
+      // Disables the strict signature check for manual testing
+      strict: false 
+    },
   },
 
   nitro: {
     preset: 'vercel',
     timing: true,
-    storage: {
-      cache: {
-        driver: 'memory' // Or 'fs' if you want it to persist across restarts
-      }
-    },
     prerender: {
       crawlLinks: true, // required for ssr api call
       // routes: ['/', '/en', '/da'],
@@ -147,6 +156,11 @@ export default defineNuxtConfig({
       concurrency: 1,
       interval: 100
       // failOnError: false
+    },
+    storage: {
+      cache: {
+        driver: 'memory' // Or 'fs' if you want it to persist across restarts
+      }
     },
     moduleSideEffects: ['lz-string'],
     // experimental: { wasm: true }
@@ -177,27 +191,19 @@ export default defineNuxtConfig({
     }
   },
   icon: {
-    // provider: 'iconify',
-    // fallbackToApi: false, // Prevents it from shouting if it can't find an icon online
-    serverBundle: false /*, 
-    clientBundle: { 
-      scan: true,
-      icons: []
-    }
-    includeCustomCollections: true,
-    collections: [ 'lucide',],
-    */
+    fallbackToApi: false, // Prevents it from shouting if it can't find an icon online
+    serverBundle: 'local',
   },
 
   typescript: {
     shim: false,
     strict: false,
-    typeCheck: true /*,
+    typeCheck: true,
     tsConfig: {
       compilerOptions: {
         types: ["nuxt", "vite/client"]
       }
-    } */
+    }
   },
 
   future: {
