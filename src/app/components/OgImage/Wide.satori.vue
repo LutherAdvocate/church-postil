@@ -60,7 +60,7 @@ const d = computed(() => {
 // console.log('--- ISLAND RENDER SUCCESS (Docs) ---')
 // console.log('Props (d): ', props.d, '\n- Expand the log if necessary!')
 
-const sectionId = 0
+// const sectionId = 0
 </script>
 
 <template>
