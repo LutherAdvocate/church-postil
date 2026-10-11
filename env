@@ -1,0 +1,8 @@
+ NUXT_OG_IMAGE_SECRET="kjh"
+# Public URL, used for OG Image when running nuxt generate
+# NUXT_PUBLIC_SITE_URL=https://church-postil.vercel.app
+# Moved to vercel (online) as environment variable
+
+# NODE_TLS_REJECT_UNAUTHORIZED=0
+
+# NUXT_PUBLIC_SITE_URL is set on vercel.app
