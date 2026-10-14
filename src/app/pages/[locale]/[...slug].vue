@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageHeadline } from '@nuxt/content/utils'
 import LZString from 'lz-string'
+import { useSlugInitializer } from '@/composables/useSlugInitializer'
+
 
 const { toc } = useAppConfig()
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
