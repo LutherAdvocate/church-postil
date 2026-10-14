@@ -125,8 +125,8 @@ export default defineNuxtConfig({
     } // Optional: helps if you ever fetch from other domains
   },
   sourcemap: {
-    server: true,
-    client: true
+    server: false,
+    client: false
   },
 
   devServer: {
