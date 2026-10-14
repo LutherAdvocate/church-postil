@@ -207,113 +207,12 @@ const handleContextMenu = (e: Event) => {
   }
 }
 
-/* Handle scroll to note linke */
-// source: https://gemini.google.com/share/f80fafd3413d
-// const { allNotes } = useNotes()
-
-// Watch for when the component is ready
-// Inside [...slug].vue
-onMounted(() => {
-  // --- PAYLOAD TYPE 1: UNZIPPING (?v=...) ---
-  if (route.query.v) {
-    console.log('unzipping')
-    const unzipped = JSON.parse(LZString.decompressFromEncodedURIComponent(route.query.v as string))
-    console.log('Welcome back! You were sent here to see:', unzipped.d)
-    return
-    // source: https://gemini.google.com/share/a89844d0d7e5
-  }
-
-  // --- PAYLOAD TYPE 2: DECOMPRESS & HIGHLIGHT SEARCH (?s=...) ---
-  const s = route.query.s as string
-
-  if (s && s !== 'remove-this-if-you-want-to-replace-query-s-with-text-search-hash') {
-    try {
-      const decompressed = LZString.decompressFromEncodedURIComponent(s)
-      const { d } = JSON.parse(decompressed)
-      const quoteSnippet = d.substring(0, 40)
-
-      // 1. Find the paragraph
-      const paragraphs = document.querySelectorAll('p')
-      let targetEl: HTMLElement | null = null
-
-      for (const p of paragraphs) {
-        if (p.textContent?.includes(quoteSnippet)) {
-          targetEl = p as HTMLElement
-          break
-        }
-      }
-
-      if (targetEl) {
-        const fullHtml = targetEl.innerHTML
-        const quoteToHighlight = d.trim()
-
-        // 3. Use a "Replace" to wrap the quote in a <mark> tag
-        if (fullHtml.includes(quoteToHighlight)) {
-          targetEl.innerHTML = fullHtml.replace(
-            quoteToHighlight,
-            `<mark style="background-color: #fef08a; color: black; padding: 2px 0;">${quoteToHighlight}</mark>`
-          )
-        }
-
-        // 4. Scroll to the element
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    } catch (e) {
-      console.error('Manual highlight failed', e)
-    }
-  } // https://gemini.google.com/share/0a4a0adb393b
-
-
-  // --- PAYLOAD TYPE 3: CHROME NATIVE TEXT HIGHLIGHT REFRESH NUDGE ---
-  const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-  const fullUrl = navEntry?.name || ''
-
-  if (fullUrl.includes('#:~:text=')) {
-    console.log('if6 text search hash')
-    const textFragment = fullUrl.split('#')[1] // Gets :~:text=...
-
-    if (import.meta.client) {
-      window.history?.replaceState(null, '', window.location.pathname + '#' + textFragment)
-    }
-    
-    // Your "Nudge" to ensure the browser highlights
-    setTimeout(() => {
-      window.scrollBy(0, 1)
-      window.scrollBy(0, -1)
-    }, 500)
-  }
-})
-
-
-
-
-
-// This handles the "Jumping" if you are already on the page
-watch(() => route.hash, () => {
-  if (route.hash.startsWith('#note-'))
-    scrollToNoteFromHash()
-  else console.log('string not starts width #note-')
-}) // https://gemini.google.com/share/c9a8b8ceb3f8
-
-const { allNotes } = useNotes()
-
-const scrollToNoteFromHash = () => {
-  const noteId = route.hash?.replace('#note-', '')
-  const targetNote = allNotes.value.find(n => String(n.id) === noteId)
-
-  if (targetNote) {
-    const notePos = targetNote.top
-
-    // Your discovered "Sweet Spot" formula
-    const responsiveOffset = window.innerWidth * 0.7
-    const finalTarget = notePos + responsiveOffset
-
-    window.scrollTo({
-      top: finalTarget - 70,
-      behavior: 'smooth'
-    })
-  }
-}
+/**
+ * Handle scroll to note links, hashtags etc.
+ * jur.eleison@ https://gemini.google.com/share/f80fafd3413d
+ * is moved from onMounted to a composable: useSlugInitializer()
+ */
+useSlugInitializer()
 
 /* GET THE PAGE ID FROM THE PAGE PATH AND SAVE IT */
 const pageId = usePageId()

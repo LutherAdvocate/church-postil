@@ -349,7 +349,7 @@ function getRowItems(row: Row<RowItems>) {
       label: row.getIsExpanded() ? 'Collapse' : 'Expand',
       id: 'homeButtonRef',
       title: row.getIsExpanded() ? 'Collapse or just open a new row to auto collapse the open row!' : JSON.stringify(row.original),
-      icon: row.getIsExpanded() ? 'i-fluent-arrow-collapse-all-24-regular' : 'i-fluent-arrow-expand-all-24-regular',
+      icon: row.getIsExpanded() ? 'i-lucide:panel-bottom-close' : 'i-lucide:expand',
       onSelect() { // on right click on row
         row.toggleExpanded()
       }

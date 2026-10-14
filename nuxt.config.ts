@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
+  // plugins: [ '~/plugins/scrollToHashTags.ts'],
+
   $development: {
     runtimeConfig: {
       // Also tell the site-config module specifically
@@ -123,8 +125,8 @@ export default defineNuxtConfig({
     } // Optional: helps if you ever fetch from other domains
   },
   sourcemap: {
-    server: false,
-    client: false
+    server: true,
+    client: true
   },
 
   devServer: {
