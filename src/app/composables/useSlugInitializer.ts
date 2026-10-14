@@ -2,6 +2,7 @@
 import { onMounted, watch } from 'vue'
 import LZString from 'lz-string'
 
+// Used as function in [slug].vue
 export const useSlugInitializer = () => {
   const route = useRoute()
 

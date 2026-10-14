@@ -7,7 +7,6 @@ import { findPageHeadline } from '@nuxt/content/utils'
 import LZString from 'lz-string'
 import { useSlugInitializer } from '@/composables/useSlugInitializer'
 
-
 const { toc } = useAppConfig()
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
@@ -101,6 +100,10 @@ defineOgImage(layout, {
   }
 )
 
+/**
+ * TOC MENU FROM HERE DOWN TO THE HASH COMPOSABLE HANDLER
+ */
+
 // 4. Wrap the logic in a safe Computed block
 const links = computed(() => {
   // If page is null (because it's an API route or 404),
@@ -122,7 +125,6 @@ const links = computed(() => {
 
   return result
 })
-// Start working with the toc menu
 
 /* -------- SAVING NAV MENU REF ---------- */
 // Only used as ref to recognize click outside toc menu
@@ -177,6 +179,27 @@ const handleUpdate = (isOpen: boolean) => {
   }
 }
 
+const pageContainer = ref(null)
+const noteRef = ref<any>(null)
+const lastActionTime = useLastActionTime() as any // For the "Double-fire" shield
+
+const handleContextMenu = (e: Event) => {
+  const now = Date.now()
+  // If a highlight was created in the last 1 second, prevent the menu
+  if (now - lastActionTime < 1000) {
+    e.preventDefault()
+  }
+}
+
+/**
+ * TOC MENU WATCHER
+ * Not included in the comosable useSlugInitializer (below)
+ * This wathcer is using the nuxt plugin tocmenuaccordions.ts
+ * GET THE PAGE ID FROM THE PAGE PATH AND SAVE IT ETC.
+ */
+const pageId = usePageId()
+const { getIdByPath } = useOppositeLanguage()
+pageId.value = getIdByPath(route.fullPath) as string
 const hashArrayRef = ref([])
 
 // Watch for changes in the URL hash (e.g., #second-sunday... etc.)
@@ -197,18 +220,6 @@ watch(() => route.hash, (newHash /* , oldHash */) => {
   }
 })
 
-const pageContainer = ref(null)
-const noteRef = ref<any>(null)
-const lastActionTime = useLastActionTime() as any // For the "Double-fire" shield
-
-const handleContextMenu = (e: Event) => {
-  const now = Date.now()
-  // If a highlight was created in the last 1 second, prevent the menu
-  if (now - lastActionTime < 1000) {
-    e.preventDefault()
-  }
-}
-
 /**
  * Handle scroll to note links, hashtags etc.
  * jur.eleison@ https://gemini.google.com/share/f80fafd3413d
@@ -216,18 +227,13 @@ const handleContextMenu = (e: Event) => {
  */
 useSlugInitializer()
 
-/* GET THE PAGE ID FROM THE PAGE PATH AND SAVE IT */
-const pageId = usePageId()
-const { getIdByPath } = useOppositeLanguage()
-pageId.value = getIdByPath(route.fullPath) as string
+// exporting headline for use in og-modules etc.
+headlineT.value = headline.value
 
 // Toc menu icon or x (close)
 const tocIcon = (open) => {
   return open ? '✖' : '☰'
 }
-
-// exporting headline for use in og-modules etc.
-headlineT.value = headline.value
 </script>
 
 <template>
