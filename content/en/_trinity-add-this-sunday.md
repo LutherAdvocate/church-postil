@@ -2,4 +2,4 @@
 navigation: false
 ---
 
-# First header
+# First stipulated header
