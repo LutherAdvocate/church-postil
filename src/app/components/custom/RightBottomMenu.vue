@@ -273,46 +273,59 @@ const searchTermRef = ref('')
 /* -- HANDLING THE BLUR ON INPUT ON STARTUP AND ON TYPING  -- */
 const handleInputRef = (el: any) => {
   if (!el) return
+  
   // 1. Get the DOM node.
   // If it's a component, grab $el.
   let domNode = el.$el ?? el
+  
   // 2. If it's a #text node (nodeType 3), look for the nearest element sibling
   if (domNode.nodeType === 3 && domNode.nextElementSibling) {
     domNode = domNode.nextElementSibling
   }
+  
   // 3. Now ensure we have a real element to query
   if (domNode instanceof HTMLElement || domNode instanceof Element) {
-    const input = domNode.children[0]!.children[0] as HTMLInputElement // domNode.querySelector('input')
-    let timer
+    const input = domNode.children[0]!.children[0] as HTMLInputElement
+    
+    let timer // : number | null = null
+    
     function startTimer() {
-      // 1. Capture the ID
+      // Clear any existing timer before starting a new one
+      if (timer !== null) clearTimeout(timer)
+      
+      // Set the 5-second delay to blur the input
       timer = setTimeout(() => {
         input.blur()
-      }, 3000) // 3-second delay before input blur()
+      }, 5000) // Changed from 3000 to 5000 as requested
     }
-
+    
     if (input) {
-      // Your logic here (e.g., input.focus())
-      // Option A: Blur it immediately
       const rawComp = toRaw(input)
-      const inputValue = rawComp.value as any
-      if (inputValue.trim().length === 0)
-        input.blur() // not keyboard typing
-      else {
+      const inputValue = rawComp.value as string
+      
+      // CRITICAL FIX: Removed immediate input.blur() here.
+      // We only update state and start the timer based on content length.
+      if (inputValue.trim().length === 0) {
+        // Do NOT blur immediately. Just clear search term if needed.
+        searchTermRef.value = '' 
+      } else {
         searchTermRef.value = inputValue
-        startTimer()
+        startTimer() // Start the silence timer only when text exists
       }
-      watch(inputValue, () => {
+      
+      watch(inputValue as any, (/* newVal */) => {
         function resetTimer() {
-          // 2. Clear the existing timer
-          clearTimeout(timer)
-          // 3. Restart the timer
+          // Clear the existing timer if user types again
+          if (timer !== null) clearTimeout(timer)
+          // Restart the 5-second silence timer
           startTimer()
         }
+        
+        // Reset timer on every keystroke
         resetTimer()
       })
-
-      // Option B: Make it readonly temporarily so keyboard can't open
+      
+      // Optional: Make it readonly temporarily so keyboard can't open immediately
       input.readOnly = true
       setTimeout(() => {
         input.readOnly = false
@@ -680,6 +693,7 @@ const openHeaderMenu = () => {
                       class="groups text-muted"
                       :autofocus="false"
                       :close="{ color: 'neutral', variant: 'ghost' }"
+                      :fuse="{ resultLimit: Infinity }"
                       :ui="{
                         input: '[&>input]:[inputmode:none]',
                         root: 'u-command-palette'
