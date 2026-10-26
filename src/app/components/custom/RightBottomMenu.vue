@@ -273,66 +273,62 @@ const searchTermRef = ref('')
 /* -- HANDLING THE BLUR ON INPUT ON STARTUP AND ON TYPING  -- */
 const handleInputRef = (el: any) => {
   if (!el) return
-  
+
   // 1. Get the DOM node.
-  // If it's a component, grab $el.
   let domNode = el.$el ?? el
   
-  // 2. If it's a #text node (nodeType 3), look for the nearest element sibling
+  // Handle #text nodes if necessary
   if (domNode.nodeType === 3 && domNode.nextElementSibling) {
     domNode = domNode.nextElementSibling
   }
-  
-  // 3. Now ensure we have a real element to query
+
+  // Ensure we have a real element
   if (domNode instanceof HTMLElement || domNode instanceof Element) {
     const input = domNode.children[0]!.children[0] as HTMLInputElement
     
     let timer // : number | null = null
+
+    // --- STEP 1: Handle Initial Blur on Mount ---
+    console.log('[DEBUG] handleInputRef: Blurring input on mount...')
+    input.blur()
     
-    function startTimer() {
-      // Clear any existing timer before starting a new one
-      if (timer !== null) clearTimeout(timer)
+    searchTermRef.value = ''
+
+    // --- STEP 2: Register Click Event to Start Timer & Force Focus ---
+    const rawComp = toRaw(input)
+    const inputValue = rawComp.value as any
+
+    input.addEventListener('click', (/* event: Event */) => {
+      // console.log('[DEBUG] handleInputRef: Click detected. Starting timer...')
       
-      // Set the 5-second delay to blur the input
+      // Clear any existing timer from previous interactions
+      if (timer) clearTimeout(timer)
+
+      // Start the 3-second timer
       timer = setTimeout(() => {
+        // console.log('[DEBUG] handleInputRef: Timer expired. No typing detected. Blurring input...')
         input.blur()
-      }, 5000) // Changed from 3000 to 5000 as requested
-    }
-    
-    if (input) {
-      const rawComp = toRaw(input)
-      const inputValue = rawComp.value as string
-      
-      // CRITICAL FIX: Removed immediate input.blur() here.
-      // We only update state and start the timer based on content length.
-      if (inputValue.trim().length === 0) {
-        // Do NOT blur immediately. Just clear search term if needed.
-        searchTermRef.value = '' 
-      } else {
-        searchTermRef.value = inputValue
-        startTimer() // Start the silence timer only when text exists
-      }
-      
-      watch(inputValue as any, (/* newVal */) => {
-        function resetTimer() {
-          // Clear the existing timer if user types again
-          if (timer !== null) clearTimeout(timer)
-          // Restart the 5-second silence timer
-          startTimer()
-        }
+      }, 3000)
+
+      // Force focus immediately on click to ensure keyboard opens
+      input.focus()
+    })
+
+    // --- STEP 3: Watch for typing to prevent auto-blur ---
+    watch(
+      () => inputValue.value,
+      (/* newValue */) => {
+        // console.log('[DEBUG] handleInputRef: User started typing. Re-focusing... ', newValue);
         
-        // Reset timer on every keystroke
-        resetTimer()
-      })
-      
-      // Optional: Make it readonly temporarily so keyboard can't open immediately
-      input.readOnly = true
-      setTimeout(() => {
-        input.readOnly = false
-      }, 100)
-    }
+        // Explicitly focus again to ensure mobile keyboard appears
+        inputValue.focus();
+      },
+      { immediate: false } // Don't run on initial empty value
+    );
+  } else {
+    console.warn('[DEBUG] handleInputRef: Input element not found or focus method missing.');
   }
-}
+};
 
 // const templateExpandedHandler = () => { /* */ }
 const backupJson = () => {
