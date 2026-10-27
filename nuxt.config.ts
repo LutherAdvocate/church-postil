@@ -131,7 +131,8 @@ export default defineNuxtConfig({
 
   devServer: {
     https: false,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    port: 3000
   },
 
   experimental: {
@@ -190,11 +191,22 @@ export default defineNuxtConfig({
     ssr: {
       // Forces Vite to compile unhead code directly into the server bundle file
       noExternal: ['unhead', '@unhead/shared', '@unhead/dom', '@unhead/ssr']
+    },
+    // This server settingg is necessary for USB Debugging trough cable
+    server: {
+      fs: {
+        strict: false
+      },
+      ws: {
+        port: 24678,
+        clientPort: 24678
+      }
     }
   },
   icon: {
     fallbackToApi: false, // Prevents it from shouting if it can't find an icon online
-    serverBundle: 'local',
+    serverBundle: 'local'
+    // provider: 'iconify', serverBundle: false // Online Loading of icons
   },
 
   typescript: {

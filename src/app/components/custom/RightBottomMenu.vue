@@ -267,68 +267,83 @@ watch(movableMenuOpen, (newVal, oldVal) => {
 
 /* END PREVENT THE MENU FROM POPPING UP WHEN DRAGGED */
 
-// const selectmovableMenuOpen = ref(false)
-const searchTermRef = ref('')
+/* -- START HANDLING THE BLUR ON INPUT ON STARTUP AND ON TYPING  -- */
 
-/* -- HANDLING THE BLUR ON INPUT ON STARTUP AND ON TYPING  -- */
+const searchTermRef = ref('')
+// Scoped persistent variables to prevent timer racing
+let clickTimer: any = null
+let hasBlurredOnMount = false
+
 const handleInputRef = (el: any) => {
   if (!el) return
 
-  // 1. Get the DOM node.
   let domNode = el.$el ?? el
-  
-  // Handle #text nodes if necessary
   if (domNode.nodeType === 3 && domNode.nextElementSibling) {
     domNode = domNode.nextElementSibling
   }
 
-  // Ensure we have a real element
   if (domNode instanceof HTMLElement || domNode instanceof Element) {
     const input = domNode.children[0]!.children[0] as HTMLInputElement
     
-    let timer // : number | null = null
+    // Stop duplicate template updates from resetting our listeners
+    if (hasBlurredOnMount) return
 
     // --- STEP 1: Handle Initial Blur on Mount ---
-    console.log('[DEBUG] handleInputRef: Blurring input on mount...')
+    // console.log('[DEBUG] handleInputRef: Blurring input on mount...')
     input.blur()
-    
     searchTermRef.value = ''
+    hasBlurredOnMount = true // Lock it down
 
-    // --- STEP 2: Register Click Event to Start Timer & Force Focus ---
-    const rawComp = toRaw(input)
-    const inputValue = rawComp.value as any
-
-    input.addEventListener('click', (/* event: Event */) => {
-      // console.log('[DEBUG] handleInputRef: Click detected. Starting timer...')
+    // --- STEP 2: The Core Dual-Timer Pipeline ---
+    input.addEventListener('click', () => {
+      // console.log('[DEBUG] handleInputRef: Click detected. Starting immediate 3s countdown...')
       
-      // Clear any existing timer from previous interactions
-      if (timer) clearTimeout(timer)
-
-      // Start the 3-second timer
-      timer = setTimeout(() => {
-        // console.log('[DEBUG] handleInputRef: Timer expired. No typing detected. Blurring input...')
-        input.blur()
-      }, 3000)
-
-      // Force focus immediately on click to ensure keyboard opens
-      input.focus()
-    })
-
-    // --- STEP 3: Watch for typing to prevent auto-blur ---
-    watch(
-      () => inputValue.value,
-      (/* newValue */) => {
-        // console.log('[DEBUG] handleInputRef: User started typing. Re-focusing... ', newValue);
+      // Function to handle the actual evaluation and closure rules
+      const startTimer = () => {
+        if (clickTimer) clearTimeout(clickTimer)
         
-        // Explicitly focus again to ensure mobile keyboard appears
-        inputValue.focus();
-      },
-      { immediate: false } // Don't run on initial empty value
-    );
+        clickTimer = setTimeout(() => {
+          // console.log('[DEBUG] handleInputRef: 3s timer expired. Closing keyboard to save screen space.')
+          input.blur()
+        }, 3000)
+      }
+
+      // Start the timer immediately on click (protects against accidental taps)
+      startTimer()
+
+      // Force mobile keyboard focus
+      input.focus()
+
+      // --- STEP 3: Keyup Listener with Input Verification Logs ---
+      input.addEventListener('keyup', () => {
+        const rawComp = toRaw(input)
+        const inputValue = rawComp.value as any
+
+        // 🔍 NEW: Verification logs to trace input handling in real-time
+        /*
+        console.log('[DEBUG] handleInputRef -> KEYUP event triggered.')
+        console.log(`[DEBUG] Current Input String: "${inputValue}"`)
+        console.log(`[DEBUG] Trimmed Length: ${inputValue.trim().length}`)
+        */
+
+        if (inputValue.trim().length === 0) {
+          // console.log('[DEBUG] handleInputRef: Input field cleared or only spaces. Closing immediately.')
+          if (clickTimer) clearTimeout(clickTimer)
+          input.blur() 
+        } else {
+          // console.log(`[DEBUG] handleInputRef: Valid content. Syncing search state -> searchTermRef.value = "${inputValue}"`)
+          searchTermRef.value = inputValue
+          
+          // Restart the 3-second timer from the moment they lifted their finger!
+          startTimer()
+        }
+      }, { once: false })
+
+    })
   } else {
-    console.warn('[DEBUG] handleInputRef: Input element not found or focus method missing.');
+    console.warn('[DEBUG] handleInputRef: Input element structure mismatch.');
   }
-};
+} /* END OF INPUT HANDLELER INSIDE THE NOTE MENU */
 
 // const templateExpandedHandler = () => { /* */ }
 const backupJson = () => {

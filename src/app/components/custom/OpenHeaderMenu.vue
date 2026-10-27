@@ -188,7 +188,7 @@ function showToast(title: string, description: string) {
 }
 
 const footerMenuAccordion = ref<AccordionItem[]>([
-  { label: 'About Luther\'s Church Postil', icon: 'i-iconoir-church' }
+  { label: 'About Luther\'s Church Postil', icon: 'i-lucide:church' }
 ])
 const footerMenuAccordionTabs = ref<TabsItem[]>([
   {
