@@ -211,11 +211,13 @@ const toggleLang = () => {
       }
     }
   } else { // not pageId
-    if (!route.path.endsWith('/note') || !route.path.endsWith('/intro'))
-      $toggleLanguageOnMainPages(locale.value)
-    console.log('$toggleLanguageOnMainPages except /note and /intro page, route.path= ', route.path)
+    $toggleLanguageOnMainPages(locale.value)
+    console.log('No pageId found for this path; ', route.path)
   }
-  toast.add({ title: `${uiLocale.value.name} Translated Page`, description: '' })
+  // Print Message about translation only when necessary
+  if (!(route.path.endsWith('/notes') || route.path.endsWith('/intro'))) {
+    toast.add({ title: `${uiLocale.value.name}`, description: locale.value === 'da' ? 'Oversettelse' : 'Translation' })
+  } else console.log('No translation for /notes and /intro')
 }
 
 // https://share.google/aimode/SQerCGjVs75LHYtJV

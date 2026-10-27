@@ -22,9 +22,7 @@ const pageId = usePageId()
 
 watch(openMenu, () => {
   if (openMenu.value === false) {
-    if (oldLocale !== locale.value) {
-      toast.add({ title: `${uiLocale.value.name} Translated Page`, description: '' })
-      
+    if (oldLocale !== locale.value) {      
       // 🚨 Fix 1: Identify if we are actively sitting on a document/note root page
       const isDocRootPage = route.path.endsWith('/note') || route.path.endsWith('/intro')
       
@@ -62,13 +60,15 @@ watch(openMenu, () => {
             router.push(pathStr)
           }
         } else { // no pageId
-          console.log('No pageId found, index page or a main pages?')
+          console.log('No pageId found for this path; ', route.path)
           // Runs your important hash redirection engine for the 6 main sermon pages!
-          // !route.path.includes('/note') && $toggleLanguageOnMainPages(locale.value)
-          if (!route.path.includes('/note'))
-            $toggleLanguageOnMainPages(locale.value)
+          $toggleLanguageOnMainPages(locale.value)
         }
       }
+      // Print Message about translation only when necessary
+      if (!(route.path.endsWith('/notes') || route.path.endsWith('/intro'))) {
+        toast.add({ title: `${uiLocale.value.name}`, description: locale.value === 'da' ? 'Oversettelse' : 'Translation' })
+      } else console.log('No translation for /notes and /intro')
     }
   }
 })

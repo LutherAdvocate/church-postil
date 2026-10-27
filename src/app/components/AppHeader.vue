@@ -90,7 +90,6 @@ const toggleLang = () => {
   isLang.value = isLang.value === true ? false : true
   locale.value = locale.value === 'en' ? 'da' : 'en'
 
-  toast.add({ title: `${uiLocale.value.name} Translated Page`, description: '' })
   if (pageId !== null && pageId.value?.length === 4) {
     // Grab your data from JSON
     const targetPath = getPagePath(pageId.value, locale.value)
@@ -110,10 +109,13 @@ const toggleLang = () => {
       router.push(path)
     }
   } else { // no pageId
-    if (!route.path.endsWith('/note') || !route.path.endsWith('/intro'))
-      $toggleLanguageOnMainPages(locale.value)
-    console.log('$toggleLanguageOnMainPages except /note and /intro page, route.path= ', route.path)
+    // console.log('No page ID - main root page - path; ', route.path)
+    $toggleLanguageOnMainPages(locale.value)
   }
+  // Print Message about translation only when necessary
+  if (!(route.path.endsWith('/notes') || route.path.endsWith('/intro'))) {
+    toast.add({ title: `${uiLocale.value.name}`, description: locale.value === 'da' ? 'Oversettelse' : 'Translation' })
+  } else console.log('No translation for /notes and /intro')
 }
 </script>
 
