@@ -84,13 +84,14 @@ const isLang = ref(false)
 const pageId = usePageId()
 const router = useRouter()
 const urlHash = useUrlHash()
+const route = useRoute()
 
 const toggleLang = () => {
   isLang.value = isLang.value === true ? false : true
   locale.value = locale.value === 'en' ? 'da' : 'en'
 
   toast.add({ title: `${uiLocale.value.name} Translated Page`, description: '' })
-  if (pageId !== null && pageId.value.length === 4) {
+  if (pageId !== null && pageId.value?.length === 4) {
     // Grab your data from JSON
     const targetPath = getPagePath(pageId.value, locale.value)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,7 +110,9 @@ const toggleLang = () => {
       router.push(path)
     }
   } else { // no pageId
-    $toggleLanguageOnMainPages(locale.value)
+    if (!route.path.endsWith('/note') || !route.path.endsWith('/intro'))
+      $toggleLanguageOnMainPages(locale.value)
+    console.log('$toggleLanguageOnMainPages except /note and /intro page, route.path= ', route.path)
   }
 }
 </script>

@@ -77,7 +77,7 @@ watch(
 )
 */
 const pageId = usePageId()
-pageId.value = ''
+pageId.value = '1'
 </script>
 
 <template>

@@ -66,7 +66,8 @@ watch(
 )
 */
 const pageId = usePageId()
-pageId.value = ''
+pageId.value = '2'
+
 </script>
 
 <template>

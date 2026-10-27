@@ -33,11 +33,14 @@ watch(openMenu, () => {
 
       // 🌟 STEP 1: Handled in the first IF statement to manage index pages explicitly
       if (isLandingIndexPage) {
+        console.log('$toggleLanguageOnMainPages')
+        $toggleLanguageOnMainPages(locale.value)
         // Handle transitions strictly for index landing zones here if needed, 
         // or let it pass gracefully.
       } 
       // 🌟 STEP 2: Explicitly intercept and PREVENT any redirection for da/note or da/intro
       else if (isDocRootPage) {
+        console.log('Note or Intro page detected via OpenHeaderMenu (when the menu was closed)...')
         // Do absolutely nothing. It breaks out of the loop and locks the page open!
         return
       } 
@@ -59,6 +62,7 @@ watch(openMenu, () => {
             router.push(pathStr)
           }
         } else { // no pageId
+          console.log('No pageId found, index page or a main pages?')
           // Runs your important hash redirection engine for the 6 main sermon pages!
           // !route.path.includes('/note') && $toggleLanguageOnMainPages(locale.value)
           if (!route.path.includes('/note'))
@@ -78,9 +82,8 @@ const tabs: TabsItem[] = [
 const activeTab = ref(locale.value === 'en' ? 'en' : 'da')
 
 watch(activeTab, (newTabValue: string, oldTabValue) => {
-  console.log('watching activeTab')
   if (newTabValue !== oldTabValue) {
-    console.log('watching activeTab inside IF')
+    console.log('Watching activeTab -> (newTabValue !== oldTabValue)')
     locale.value = newTabValue
     showToast(`Language changed`, `Close the menu to switch lang.`)
   }
@@ -129,7 +132,6 @@ const selectMenu = ref(false)
 const lang = computed(() => route.path.startsWith('/da') ? 'da' : 'en')
 const fetchUrl = computed(() => `/api/${lang.value}`)
 
-console.log('STARING OPENHEADERMENU')
 const { data: sermons } = await useFetch<RowCells[]>(
   () => fetchUrl.value, 
   {

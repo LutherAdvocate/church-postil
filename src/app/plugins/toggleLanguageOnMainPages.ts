@@ -1,6 +1,8 @@
 // provide global function for toggle language
 
 export default defineNuxtPlugin(() => {
+  const route = useRoute()
+
   return {
     provide: {
       toggleLanguageOnMainPages(newLocale) { // inside closeMenuAndUpdate
@@ -30,7 +32,10 @@ export default defineNuxtPlugin(() => {
         } else if (!endings.some(folder => newPath.includes(folder))) { // if path not ends with postil folder
           // This if is necessary when en and then click on danish pages in the header menu
           console.log('Toggle language of root pages', newPath)
-          // Checking if the old route exists in the new language code
+          if (!route.path.endsWith('/note') || !route.path.endsWith('/intro'))
+            return // does not redirect to the other language if the page is a note or intro page, because these pages are not translated yet
+          
+          // Checking if the old route exists in the new language code - if not note or intro page
           const index2LastSlash = newPath.lastIndexOf('/')
           let resultUrl
           if (!router.hasRoute(newPath)) {
