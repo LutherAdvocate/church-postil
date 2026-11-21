@@ -62,7 +62,7 @@ export default defineEventHandler(() => {
     { id: 3341, postil: 'Winter', tags: 'Epistle', label: '4.Sun. Lent', bible: 'Gal 4: 21-31' },
     { id: 3342, postil: 'Winter', tags: 'Gospel', label: '4.Sun. Lent', bible: 'Joh 6: 1-15' },
 
-    /* id: 3344 Not translated to English "Marys Annunciation Day Luk 1: 26-38" */
+    { id: 3344, postil: 'Winter', tags: 'Gospel', label: 'Mary\'s Annun', bible: 'Luk 1: 26-38' },
 
     { id: 3351, postil: 'Winter', tags: 'Epistle', label: '5.Sun. Lent', bible: 'Heb 9: 11-15' },
     { id: 3352, postil: 'Winter', tags: 'Gospel', label: '5.Sun. Lent', bible: 'Joh 8: 46-59' },
