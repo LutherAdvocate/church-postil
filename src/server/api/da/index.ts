@@ -36,8 +36,8 @@ export default defineEventHandler(() => {
     { label: 'Faste Postil; Åb.søndagene - Langfre.', type: 'label' },
 
     { id: 3111, postil: 'Faste', tags: 'Epistel', label: '1.S.e.Åbenb.', bible: 'Rom 12: 1-5' },
-    { id: 3112, postil: 'Faste', tags: 'Evangelium', label: '1.S.e.Åbenb.', bible: 'Luk 2: 41-52' },
-    /* id: 3113 Not Translated to Danish: "1.Sun after Epi 2.sermon Luk 2: 41-52" */
+    { id: 3112, postil: 'Faste', tags: 'Evangelium', label: '1.S.e.Åb.1st.', bible: 'Luk 2: 41-52' },
+    { id: 3113, postil: 'Faste', tags: 'Evangelium', label: '1.S.e.Åb.2nd', bible: 'Luk 2: 41-52' },
     { id: 3121, postil: 'Faste', tags: 'Epistel', label: '2.S.e.Åbenb.', bible: 'Rom 12: 6-16' },
     { id: 3122, postil: 'Faste', tags: 'Evangelium', label: '2.S.e.Åbenb.', bible: 'Joh 2: 1-11' },
     { id: 3131, postil: 'Faste', tags: 'Epistel', label: '3.S.e.Åbenb.', bible: 'Rom 12: 16-21' },
