@@ -53,7 +53,7 @@ const fetchUrl = computed(() => {
 // 1. Fetch the raw data (Keep the cache clean)
 const { data: rawRows, status, error } = await useFetch<RowItems[]>(
   fetchUrl.value, {
-    key: `api-index-table2-${locale.value}-${props.postil ?? 'default'}`, // Cache key stays the same
+    key: `api-index-table-${locale.value}-${props.postil ?? 'default'}`, // Cache key stays the same
     transform: (data) => {
       // Only do structural defensive checks here, NOT business logic filtering
       return Array.isArray(data) ? data : []
@@ -388,7 +388,60 @@ const expanded = computed({
     }
   }
 })
+/* //// */
 
+const SCROLL_TOP_OFFSET = 38 // Adjust to e.g. 64 if you have a sticky/fixed top bar
+
+const scrollToTopWithOffset = (el: HTMLElement, offset = SCROLL_TOP_OFFSET) => {
+  const rect = el.getBoundingClientRect()
+  const delta = rect.top - offset
+
+  if (Math.abs(delta) > 2) {
+    window.scrollBy({
+      top: delta,
+      behavior: 'smooth',
+    })
+  }
+}
+
+const onRowSelect = async (row) => {
+  // 1. Check BEFORE mutating whether this row is already open
+  const isAlreadyOpen = Boolean(_expanded.value[row.id])
+
+  // 2. If already open, close it and do NOT scroll
+  if (isAlreadyOpen) {
+    expanded.value = {}
+    return
+  }
+
+  // 3. Otherwise, open only this row
+  expanded.value = { [row.id]: true }
+  await nextTick()
+
+  catchBible(row.original.id)
+
+  // Prefer the row itself if available (e.g. previousElementSibling of expandRefs),
+  // falling back to expandRefs.value[row.id]
+  const expandEl = expandRefs.value[row.id] as HTMLElement | undefined
+  const targetEl = (expandEl?.previousElementSibling ?? expandEl) as HTMLElement | null
+
+  if (!targetEl) return
+
+  scrollToTopWithOffset(targetEl)
+
+  // Re-check after expansion/transitions finish so layout shifts don't push it past the top
+  setTimeout(() => {
+    const updatedExpandEl = expandRefs.value[row.id] as HTMLElement | undefined
+    const updatedTarget = (updatedExpandEl?.previousElementSibling ?? updatedExpandEl) as HTMLElement | null
+    if (updatedTarget) {
+      scrollToTopWithOffset(updatedTarget)
+    }
+  }, 250)
+}
+
+
+
+/*
 // The magic "Select" function - expanding the row
 const onRowSelect = async (row) => {
   // If the row is already open, close it. If not, open only this one.
@@ -423,34 +476,6 @@ const onRowSelect = async (row) => {
 
   catchBible(row.original.id)
 }
-/*
-const scrollUpExpandRow = (el: any) => { // if it's to close to bottom
-  let distanceToBottom = 0
-  if (container) {
-    const rect = container.getBoundingClientRect()
-    const height = window.visualViewport
-      ? window.visualViewport.height
-      : window.innerHeight
-    distanceToBottom = height - rect.bottom
-    console.log('testing this is inside scrollupExpandRow')
-    console.log('height is: ', height)
-    console.log('rect.bottom = ', rect.bottom)
-    console.log('rect = ', rect)
-
-    console.log('distance to bottom = ', distanceToBottom)
-    console.log('screen height = ', height)
-    console.log('el = ', el)
-
-    // If the bottom of the content is off-screen or too close (less than 50px)
-    if (distanceToBottom < 5) {
-      console.log('now it should scroll up')
-      window.scrollBy({
-        top: 240,
-        behavior: 'smooth'
-      })
-    }
-  }
-}
 */
 
 const expandRefs = ref({})
@@ -459,25 +484,6 @@ const expandRefs = ref({})
 const scrollUpExpandRow = (el, id) => {
   if (el) expandRefs.value[id] = el
 }
-
-/*
-// Your expansion trigger function
-const onSelect = async (row) => {
-  // 1. Logic to expand the row (e.g., updating 'expand' model)
-
-  // 2. Wait for Vue to render the new DOM elements
-  await nextTick()
-
-  // 3. Access the specific element and scroll
-  const element = expandRefs.value[row.id]
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest'
-    })
-  }
-}
-*/
 
 // For the expanded rows
 function getTags(inputString, getRest = false) {

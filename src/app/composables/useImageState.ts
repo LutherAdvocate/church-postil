@@ -1,3 +1,4 @@
+// composables/useImageState.ts
 import LZString from 'lz-string'
 
 interface ImageContent {
@@ -63,15 +64,14 @@ export const useImageState = () => {
     // 2. Compress the JSON string
     const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(payload))
 
-    // `${origin}/__og-image__/image${route.path}/og.png?v=${z}` // is the correct or wrong?
-
     const originPath = `${window.location.origin}${route.path}`
 
-    // 3. Build the final OG Image URL
-    // This points to the automatic PNG route provided by Nuxt OG Image
-    const imageUrl = `${originPath}/__og-image__/image/og.png?v=${compressed}`
+    // 3. Build the final OG Image URL — STILL COMPRESSED using your existing `zip` prop!
+    const wx = imageData.value.layout === 'Narrow' ? 800 : 1200
+    const hy = imageData.value.layout === 'Narrow' ? 800 : 630
+    const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${compressed},w_${wx},h_${hy}.png`
 
-    // 4. Build the "Backlink" (The actual page the user visits)
+    // 4. Build the "Backlink" — ALSO COMPRESSED!
     const shareUrl = `${originPath}?v=${compressed}`
 
     return { imageUrl, shareUrl, fullText: imageData.value.content.d }

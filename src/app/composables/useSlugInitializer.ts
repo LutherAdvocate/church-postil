@@ -45,6 +45,23 @@ export const useSlugInitializer = () => {
     const s = route.query.s as string
 
     if (s) {
+      function findTextRange(root: HTMLElement, searchText: string): Range | null {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+        let node: Node | null
+
+        while ((node = walker.nextNode())) {
+          const text = node.textContent ?? ''
+          const index = text.indexOf(searchText)
+          if (index !== -1) {
+            const range = document.createRange()
+            range.setStart(node, index)
+            range.setEnd(node, Math.min(index + searchText.length, text.length))
+            return range
+          }
+        }
+
+        return null
+      }
       try {
         const decompressed = LZString.decompressFromEncodedURIComponent(s)
         const { d } = JSON.parse(decompressed)
@@ -62,6 +79,8 @@ export const useSlugInitializer = () => {
         }
 
         if (targetEl) {
+          let markEl: HTMLElement | null = null
+
           // 1. Get the original HTML
           const fullHtml = targetEl.innerHTML
 
@@ -76,14 +95,33 @@ export const useSlugInitializer = () => {
               quoteToHighlight,
               `<mark style="background-color: #fef08a; color: black; padding: 2px 0;">${quoteToHighlight}</mark>`
             )
+            markEl = targetEl.querySelector('mark') as HTMLElement | null
           }
 
-          // 4. Scroll to the element
-          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          // REPLACE STEP 4 WITH THIS: Scroll to the <mark> (or exact text range), not the whole <p>
+          const desiredTopOffset = 80 // Adjust to taste (e.g. 20–80px from top)
 
-          // 5. Clean the URL for the address bar
-          // const textFragment = `:~:text=${encodeURIComponent(quoteToHighlight)}`
-          // window.history.replaceState(null, '', `${window.location.pathname}#${textFragment}`)
+          if (markEl) {
+            const rect = markEl.getBoundingClientRect()
+            const targetScrollY = window.scrollY + rect.top - desiredTopOffset
+            window.scrollTo({
+              top: Math.max(0, targetScrollY),
+              behavior: 'smooth',
+            })
+          } else {
+            const range = findTextRange(targetEl, quoteSnippet)
+            if (range) {
+              const rect = range.getBoundingClientRect()
+              const targetScrollY = window.scrollY + rect.top - desiredTopOffset
+              window.scrollTo({
+                top: Math.max(0, targetScrollY),
+                behavior: 'smooth',
+              })
+            } else {
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+          }
+          // source: https://share.gemini.google/Os5DM46QYSXo
         }
       } catch (e) {
         console.error('Manual highlight failed', e)

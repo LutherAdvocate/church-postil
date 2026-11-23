@@ -192,7 +192,11 @@ const shareUrlOfZipImage = async () => {
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
-  const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+  // Old syntax:
+  // const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+
+  // New v6/v7 syntax:
+  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},z_${z},w_${wx},h_${hy}.png`
 
   // immediately copy url to clipboard before the share window open
   copy(imageUrl)
