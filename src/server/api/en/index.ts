@@ -28,6 +28,7 @@ export default defineEventHandler(() => {
     { id: 2041, postil: 'Christmas', tags: 'Epistle', label: 'Xmas Sunday', bible: 'Gal 4: 1-7' },
     { id: 2042, postil: 'Christmas', tags: 'Gospel', label: 'Xmas Sunday', bible: 'Luk 2: 33-40' },
     { id: 2051, postil: 'Christmas', tags: 'Epistle', label: 'New Year\'s D.', bible: 'Gal 3: 23-29' },
+    { id: 2052, postil: 'Christmas', tags: 'Gospel', label: 'New Year\'s D.', bible: 'Luk 2: 21' },
     { id: 2061, postil: 'Christmas', tags: 'Epistle', label: 'Epiphany', bible: 'Isaiah 60: 1-6' },
     { id: 2062, postil: 'Christmas', tags: 'Gospel', label: 'Epiphany', bible: 'Matt 2: 1-12' },
 
@@ -113,7 +114,7 @@ export default defineEventHandler(() => {
 
     { id: 5001, postil: 'Trinity I', tags: 'Epistle', label: 'Trinitatis s.', bible: 'Rom 11: 33-36' },
     { id: 5002, postil: 'Trinity I', tags: 'Gospel', label: 'Trinitatis s.', bible: 'Joh 3: 1-15' },
-    { id: 5003, postil: 'Trinity I', tags: 'Epistle', label: '2.sermon', bible: 'Rom 11: 33-36' },
+    { id: 5003, postil: 'Trinity I', tags: 'Epistle', label: '2.Ep.-Sermon', bible: 'Rom 11: 33-36' },
 
     { id: 5011, postil: 'Trinity I', tags: 'Epistle', label: '1.Sun.a.Trin.', bible: '1 Joh 4: 16-21' },
     { id: 5012, postil: 'Trinity I', tags: 'Gospel', label: '1.Sun.a.Trin.', bible: 'Luk 16: 19-31' },

@@ -1,3 +1,4 @@
+// Run this Node.js script after added or edited headers in the content files.
 import fs from 'fs'
 import path from 'path'
 import * as readline from 'node:readline/promises'
@@ -35,8 +36,18 @@ function transformFiles(dir) {
       // It looks for: Line start + (some #s) + (space) + (the title text)
       // $1 = The hashes (###), $2 = The title text
       const newContent = content.replace(/^(#{2,6})\s+(.+)$/gm, (match, hashes, title) => {
-        // Skip if it's already transformed
-        if (title.startsWith('[') && title.includes(']{#')) return match
+        // Update this:
+        if (title.startsWith('[') && title.includes(']{#')) {
+          const matchParts = title.match(/^\[(.+?)\]\{#([^}]+)\}$/)
+          const expectedId = `h${hashes.length}${hCount}`
+          hCount++
+
+          if (matchParts) {
+            const [, innerTitle, currentId] = matchParts
+            const finalId = currentId === expectedId ? currentId : expectedId
+            return `${hashes} [${innerTitle.trim()}]{#${finalId}}`
+          }
+        }
 
         const id = `h${hashes.length}${hCount}`
         hCount++

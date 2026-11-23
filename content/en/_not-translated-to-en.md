@@ -8,7 +8,7 @@ navigation: false
 
 You are here because there is no English translation of the Danish sermon;
 
-- Marys Annunciation Day Luk 1: 26-38
-- id = 3344
+- Trinity Sunday, 2nd Sermon; Joh 3: 1-15
+- id = 5003
 
 Return to the Dansih sermon by pressing one of the "Change language" buttons.

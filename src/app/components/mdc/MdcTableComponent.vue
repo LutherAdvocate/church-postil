@@ -53,7 +53,7 @@ const fetchUrl = computed(() => {
 // 1. Fetch the raw data (Keep the cache clean)
 const { data: rawRows, status, error } = await useFetch<RowItems[]>(
   fetchUrl.value, {
-    key: `api-index-table-${locale.value}-${props.postil ?? 'default'}`, // Cache key stays the same
+    key: `api-index-table2-${locale.value}-${props.postil ?? 'default'}`, // Cache key stays the same
     transform: (data) => {
       // Only do structural defensive checks here, NOT business logic filtering
       return Array.isArray(data) ? data : []
@@ -243,7 +243,7 @@ onMounted(() => {
       label: true,
       bible: true,
       // value: false,
-      menu: true
+      menu: false
     }
 
     if (newVal > 540) {
