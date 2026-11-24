@@ -92,10 +92,22 @@ const headline = computed(() => findPageHeadline(navigation?.value, page.value?.
 
 const layout = imageData.value.layout === 'Wide' ? 'Wide' : 'Narrow'
 
+console.log('🖼️ OG Image Input:', {
+  layout,
+  sData,
+  editorContent: imageData.value.content,
+  resolved: {
+    headline: sData?.h || imageData.value.content.h || headline.value,
+    title: sData?.t || imageData.value.content.t || page.value.title,
+    description: sData?.d || imageData.value.content.d || page.value.description,
+    zip: route.query.zip || route.params.zip,
+  },
+})
+
 defineOgImage(layout, {
     title: sData?.t || imageData.value.content.t || page.value.title,
     description: sData?.d || imageData.value.content.d || page.value.description,
-    headline: headline.value, // || sData?.h || imageData.value.content.h || headline.value,
+    headline: sData?.h || imageData.value.content.h || headline.value,
     zip: route.query.zip || route.params.zip as any
   }
 )

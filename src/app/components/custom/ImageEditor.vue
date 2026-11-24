@@ -129,7 +129,7 @@ const createPostWithImageAndUrl = async () => {
   // const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
 
   // RENOVATION: Convert to the modern comma-separated path format, passing 'z' as a path parameter
-  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},z_${z},w_${wx},h_${hy}.png`
+  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${z},w_${wx},h_${hy}.png`
 
   // 2. Get the Anchor Link (The "Real" Link for the Reader)
   // const sectionId = getNearestSectionId(currentElement)
@@ -196,7 +196,7 @@ const shareUrlOfZipImage = async () => {
   // const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
 
   // New v6/v7 syntax:
-  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},z_${z},w_${wx},h_${hy}.png`
+  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${z},w_${wx},h_${hy}.png`
 
   // immediately copy url to clipboard before the share window open
   copy(imageUrl)

@@ -64,7 +64,7 @@ onMounted(() => {
     })
   }
   window.oncontextmenu = function (event) {
-    if (event.target.closest('.your-scripture-class')) {
+    if (event.target.closest('.scripture-content')) {
       event.preventDefault()
       event.stopPropagation()
       return false
@@ -524,10 +524,17 @@ const toast = useToast()
 
 const sharePageLinkWithQuote = async (note) => {
   const dataToZip = {
-    h: props.headline.slice(0, 29),
-    t: ctx.title,
+    h: (ctx.path.startsWith("/en") ? ctx.title : props.headline).slice(0, 29),
+    t: ctx.path.startsWith("/en") ? props.urlAsText : ctx.title,
     d: note.text.replace(/[«»]/g, '').trim()
   }
+
+  console.log('🔍 sharePageLinkWithQuote:', {
+    propsHeadline: props.headline,
+    ctxTitle: ctx.title,
+    dataToZip
+  })
+
 
   // 2. Zip it for a "Lean" Social Media URL
   const s = LZString.compressToEncodedURIComponent(JSON.stringify(dataToZip))
@@ -538,7 +545,9 @@ const sharePageLinkWithQuote = async (note) => {
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
-  const pageUrl = `${window.location.origin}${route.path}?s=${s}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+  // Old pageUrl:   const pageUrl = `${window.location.origin}${route.path}?s=${s}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+
+  const pageUrl = `${window.location.origin}${route.path}?s=${s}&c=${imageData.value.layout}&w=${wx}&h=${hy}`
 
   // copy url to clipboard before navigator.share window open
   copy(pageUrl)
