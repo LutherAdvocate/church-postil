@@ -38,7 +38,7 @@ const toast = useToast()
 
 // const { $syncToOG, $ogImageData } = useNuxtApp()
 
-const openPreview = () => {
+const openPreview = async () => {
   // Encode the text so the URL doesn't break
   const h = encodeURIComponent(imageData.value.content.h) // headline
   const t = encodeURIComponent(imageData.value.content.t)
@@ -48,10 +48,29 @@ const openPreview = () => {
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
-  // const url = `/__og-image__/image${route.path}/og.png?h=${h}&t=${t}&d=${d}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+  // Very old const url = `/__og-image__/image${route.path}/og.png?h=${h}&t=${t}&d=${d}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
 
-  // RENOVATION: Reconstruct the path using comma-separated route segments instead of query parameters
+  // Old unsigned line:
   const url = `/_og/d/c_${imageData.value.layout},headline_${h},title_${t},description_${d},w_${wx},h_${hy}.png`
+
+  /* 
+  // IF og-image module +v7
+  // v7 ONLY signed line via /api/og-sign:
+  const { url } = await $fetch('/api/og-sign', {
+    method: 'POST',
+    body: {
+      component: imageData.value.layout,
+      width: wx,
+      height: hy,
+      path: route.path,
+      props: {
+        headline: imageData.value.content.h,
+        title: imageData.value.content.t,
+        description: imageData.value.content.d,
+      },
+    }
+  })
+  */
 
   window.open(url, '_blank')
 }

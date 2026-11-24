@@ -1,0 +1,4 @@
+{
+  // This file is not necessary before in og-image v7
+  // "extends": "../../.nuxt/tsconfig.server.json"
+}

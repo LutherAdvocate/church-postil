@@ -145,8 +145,8 @@ export default defineNuxtConfig({
   ogImage: {
     security: {
       // Disables the strict signature check for manual testing
-      strict: false 
-    },
+      secret: false // strict: true // v7 syntax
+    }
   },
 
   nitro: {
