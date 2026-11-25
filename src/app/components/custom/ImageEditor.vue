@@ -162,11 +162,12 @@ const createPostWithImageAndUrl = async () => {
   const finalPost = `
 Check out this Luther Quote:
 
-${dataToZip.d} 
+«${dataToZip.d}» 
 
 ---
 Image:
 ${imageUrl}
+---
 
 Source:
 ${anchorUrl}
@@ -174,7 +175,7 @@ ${anchorUrl}
 
   const source = 'Source:'
   const post = finalPost.split(source)[0] + source
-  copy(anchorUrl)
+  copy(finalPost) // copy(anchorUrl)
 
   // 4. Send to Clipboard / Web Share
   if (navigator.share) {

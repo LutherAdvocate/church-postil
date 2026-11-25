@@ -547,16 +547,29 @@ const sharePageLinkWithQuote = async (note) => {
 
   // Old pageUrl:   const pageUrl = `${window.location.origin}${route.path}?s=${s}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
 
+  imageData.value.layout = 'QuoteLink'
+
   const pageUrl = `${window.location.origin}${route.path}?s=${s}&c=${imageData.value.layout}&w=${wx}&h=${hy}`
 
-  // copy url to clipboard before navigator.share window open
-  copy(pageUrl)
+  imageData.value.layout = 'QuoteLink'
+
+  const shareText = `Check out this Luther Quote:
+
+  «${dataToZip.d}»
+
+  Source:
+  ${pageUrl}`
+
+  const source = 'Source:'
+  const post = shareText.split(source)[0] + source
+  copy(shareText) // copy(anchorUrl)
+  // copy shareText to clipboard before navigator.share window open
 
   if (navigator.share) {
     try {
       await navigator.share({
-        title: 'Shared Luther Quote',
-        // text: `${dataToZip.d}`, // « »
+        title: 'Luther wrote:',
+        text: post, // `${post}`, // « »
         url: pageUrl // This link contains the compressed data
       })
     } catch (err) {
@@ -564,10 +577,10 @@ const sharePageLinkWithQuote = async (note) => {
     }
   } else {
     // Fallback for PC: Copy to Clipboard
-    await navigator.clipboard.writeText(pageUrl)
+    await navigator.clipboard.writeText(shareText)
     toast.add({
-      title: 'Page Link Copied!',
-      description: 'Ready to paste in your browser.',
+      title: 'Shared Text!',
+      description: 'Ready to paste in Messenger etc.',
       icon: 'i-heroicons:clipboard-document-check'
     })
   }

@@ -5,7 +5,7 @@ const props = defineProps<{
   description: string
 }>()
 
-console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+console.log('Running Root.satori og-image component')
 </script>
 
 <template>

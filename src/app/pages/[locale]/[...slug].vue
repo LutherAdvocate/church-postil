@@ -63,22 +63,6 @@ const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
   })
 })
 
-// const config = useRuntimeConfig() // siteUrl or apiBase
-const site = useSiteConfig() // required for og-image
-
-useSeoMeta({
-  // title, // This title comes below the shared image - I don't want to have the same title in image and below it
-  ogTitle: route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
-  // description,
-  ogDescription: route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
-  ogUrl: () => `${site.url}${route.fullPath}` // route.path
-  /*
-  ogImage: quoteData // isAnchorLink.value
-    ? undefined // Let the OG Module handle it otherwise
-    : '/default-social-card.png' // A static image for urls with only the id instead of the section header title
-  */
-})
-
 let sData = null as any
 
 // We ONLY handle 's' here because it's for the normal page load
@@ -90,7 +74,27 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-const layout = imageData.value.layout === 'Wide' ? 'Wide' : 'Narrow'
+const layout = imageData.value.layout === 'Wide'
+  ? 'Wide'
+  : imageData.value.layout === 'Narrow'
+    ? 'Narrow'
+    : 'QuoteLink'
+
+// const config = useRuntimeConfig() // siteUrl or apiBase
+const site = useSiteConfig() // required for og-image
+
+useSeoMeta({
+  title: () => sData?.t || page.value?.title, // This title comes below the shared image - I don't want to have the same title in image and below it
+  ogTitle: () => sData?.t || page.value?.title, // route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
+  description: () => sData?.d || page.value?.description,
+  ogDescription: () => sData?.d || page.value?.description, // route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
+  ogUrl: () => `${site.url}${route.fullPath}` // route.path
+  /*
+  ogImage: quoteData // isAnchorLink.value
+    ? undefined // Let the OG Module handle it otherwise
+    : '/default-social-card.png' // A static image for urls with only the id instead of the section header title
+  */
+})
 
 console.log('🖼️ OG Image Input:', {
   layout,
@@ -104,9 +108,14 @@ console.log('🖼️ OG Image Input:', {
   },
 })
 
+// Shorten the quote ONLY for the Wide OG thumbnail image
+const shortDescription = sData?.d
+  ? (sData.d.length > 70 ? `${sData.d.slice(0, 70).trim()}…` : sData.d)
+  : (imageData.value.content.d || page.value.description)
+
 defineOgImage(layout, {
     title: sData?.t || imageData.value.content.t || page.value.title,
-    description: sData?.d || imageData.value.content.d || page.value.description,
+    description: shortDescription, // sData?.d || imageData.value.content.d || page.value.description,
     headline: sData?.h || imageData.value.content.h || headline.value,
     zip: route.query.zip || route.params.zip as any
   }
