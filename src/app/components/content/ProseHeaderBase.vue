@@ -7,7 +7,7 @@ const props = defineProps<{
   tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 }>()
 
-const { /* copy, */ copied } = useClipboard({ legacy: true })
+const { copy, copied } = useClipboard({ legacy: true })
 
 const { openEditor, imageData, headlineT } = useImageState()
 
@@ -60,10 +60,22 @@ const handleShareClick = () => {
   imageData.value.content.t = breadcrumbString
   imageData.value.content.d = clickedHeaderText
 
+  // Grab the inner span ID (e.g. 'h3151') first, falling back to props.id
+  const innerSpanId = targetElement.querySelector('span[id]')?.id || props.id
+  const hNumber = innerSpanId.replace(/^h/i, '') // e.g. '3151'
+
+  // Minimal URL without #hash (your client script will scroll to #h3151 from ?h=3151)
+  const route = useRoute()
+  const host = window.location.origin.includes('localhost') ? 'https://church-postil.vercel.app' : window.location.origin
+  const fullUrl = `${host}${route.path}?h=${hNumber}`
+  const displayUrl = fullUrl.replace(/^https?:\/\//, '') // e.g. church-postil.vercel.app/en/christmas?h=3151
+
+  copy(displayUrl)
+
   openEditor({
-    h: headlineT.value?.slice(0, 29),
-    t: breadcrumbString, // The "Parents" go here
-    d: clickedHeaderText || 'Clicked H el.' // The "Header" goes here
+    h: displayUrl,
+    t: breadcrumbString,
+    d: clickedHeaderText || 'Clicked H el.'
   })
 }
 
@@ -83,7 +95,7 @@ const sizes = {
   >
     <NuxtLink
       :to="`#${id}`"
-      title="Click to Copy this link for SHARING"
+      title="Click to create an Image for SHARING"
       class="no-underline hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline"
     >
       <slot />

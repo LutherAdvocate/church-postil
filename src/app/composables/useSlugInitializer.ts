@@ -41,7 +41,16 @@ export const useSlugInitializer = () => {
       // You could open your Slideover here automatically to show them the quote!
     }
 
-    // --- PAYLOAD TYPE 2: DECOMPRESS & HIGHLIGHT SEARCH (?s=...) ---
+    // --- PAYLOAD TYPE 2.1: EVENTUAL SHARED HEADERS (?h=...) ---
+    if (route.query.h) {
+      const targetId = `h${String(route.query.h).replace(/^h/i, '')}`
+      const el = document.getElementById(targetId)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+
+    // --- PAYLOAD TYPE 2.2: DECOMPRESS & HIGHLIGHT SEARCH (?s=...) ---
     const s = route.query.s as string
 
     if (s) {

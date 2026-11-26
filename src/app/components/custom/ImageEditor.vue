@@ -126,6 +126,23 @@ const getSourceUrl = () => {
   return `${window.location.origin}${route.path}${sectionId}`
 } // https://gemini.google.com/share/9aabcd75c390
 
+const downLoadUrlImage = async (imageUrl) => {
+    const response = await fetch(imageUrl)
+  const blob = await response.blob()
+  const blobUrl = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = blobUrl
+
+  const uniqueId = `${Date.now()}` // `${Date.now()}-${Math.floor(Math.random() * 10000)}`
+  link.download = `luther-quote-${imageData.value.layout.toLowerCase()}-${uniqueId}.png`
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(blobUrl)
+}
+
 const { copy, copied } = useClipboard()
 
 const createPostWithImageAndUrl = async () => {
@@ -154,7 +171,16 @@ const createPostWithImageAndUrl = async () => {
   // const sectionId = getNearestSectionId(currentElement)
   // const anchorUrl = `${window.location.origin}${route.path}${sectionId}`
 
-  const sourceUrl = getSourceUrl()
+  const headlineHasUrl = computed(() =>
+    (imageData.value.content.h || '').toLowerCase().includes('church-postil.vercel.app')
+  )
+
+  const getHeadline = () => {
+    const cleanHostAndPath = (imageData.value.content.h || '').trim().replace(/^https?:\/\//i, '')
+    return `https://${cleanHostAndPath}`
+  }
+
+  const sourceUrl = headlineHasUrl.value ? getHeadline() : getSourceUrl()
 
   // 4. Send to Clipboard / Web Share
   // const fullMessage = `Check out this Luther Quote:\n\n"${dataToZip.d}"\n\nView Image: ${imageUrl}`
@@ -163,11 +189,6 @@ const createPostWithImageAndUrl = async () => {
 Check out this Luther Quote:
 
 «${dataToZip.d}» 
-
----
-Image:
-${imageUrl}
----
 
 Source:
 ${sourceUrl}
@@ -191,8 +212,9 @@ ${sourceUrl}
   } else {
     // Fallback for PC: Copy to Clipboard
     await navigator.clipboard.writeText(msgTemplate)
-    toast.add({ title: 'Copied Post!', description: 'Past (quote & links to image and source) from clipboard to Post' })
+    toast.add({ title: 'Copied Template!', description: 'Paste (the copied content) from clipboard, and downloaded image, into a new post or a chat.' })
   }
+  downLoadUrlImage(imageUrl)
 }
 
 // Showing this options only with a share icon
@@ -225,7 +247,7 @@ const shareUrlOfZipImage = async () => {
   if (navigator.share) {
     try {
       await navigator.share({
-        title: 'Shared Luther Quote',
+        title: 'URL Image of Luther Quote',
         // text: `${imageData.value.content.d}`, // « »
         url: imageUrl // This link contains the compressed data
       })
@@ -235,8 +257,9 @@ const shareUrlOfZipImage = async () => {
   } else {
     // Fallback for PC: Copy to Clipboard
     await navigator.clipboard.writeText(imageUrl)
-    toast.add({ title: 'Link Copied!', description: 'Ready to paste in your browser.' })
+    toast.add({ title: 'URL Image Link!', description: 'Use the URL if you don\'t want to use the downloaded image!' })
   }
+  downLoadUrlImage(imageUrl)
 }
 
 // Replace the right "SHARE IMAGE"-button with "DOWNLOAD IMG"-button
@@ -261,20 +284,7 @@ const downloadImage = async () => {
   const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${z},w_${wx},h_${hy}.png`
 
   // THE DOWNLOAD CODING
-  const response = await fetch(imageUrl)
-  const blob = await response.blob()
-  const blobUrl = URL.createObjectURL(blob)
-
-  const link = document.createElement('a')
-  link.href = blobUrl
-
-  const uniqueId = `${Date.now()}` // `${Date.now()}-${Math.floor(Math.random() * 10000)}`
-  link.download = `luther-quote-${imageData.value.layout.toLowerCase()}-${uniqueId}.png`
-
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(blobUrl)
+  downLoadUrlImage(imageUrl)
 }
 
 /* ------------- NOTE OVERVIEW --------------- */
