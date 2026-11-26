@@ -553,7 +553,7 @@ const sharePageLinkWithQuote = async (note) => {
 
   imageData.value.layout = 'QuoteLink'
 
-  const shareText = `Check out this Luther Quote:
+  const msgTemplate = `Check out this Luther Quote:
 
   «${dataToZip.d}»
 
@@ -561,15 +561,14 @@ const sharePageLinkWithQuote = async (note) => {
   ${pageUrl}`
 
   const source = 'Source:'
-  const post = shareText.split(source)[0] + source
-  copy(shareText) // copy(anchorUrl)
-  // copy shareText to clipboard before navigator.share window open
+  const text = msgTemplate.split(source)[0] + source
+  copy(msgTemplate) // make the text available if navigator.share fails
 
-  if (navigator.share) {
+  if (isMobile && navigator.share) {
     try {
       await navigator.share({
         title: 'Luther wrote:',
-        text: post, // `${post}`, // « »
+        text: text, // `${text}`, // « » // text property do not exist on pc
         url: pageUrl // This link contains the compressed data
       })
     } catch (err) {
@@ -577,7 +576,7 @@ const sharePageLinkWithQuote = async (note) => {
     }
   } else {
     // Fallback for PC: Copy to Clipboard
-    await navigator.clipboard.writeText(shareText)
+    await navigator.clipboard.writeText(msgTemplate)
     toast.add({
       title: 'Shared Text!',
       description: 'Ready to paste in Messenger etc.',

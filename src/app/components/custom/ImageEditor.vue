@@ -75,7 +75,7 @@ const openPreview = async () => {
   window.open(url, '_blank')
 }
 
-const getAnchorUrl = () => {
+const getSourceUrl = () => {
   // 1. Normalize for a fair comparison
   const normalize = (text: string) => {
     return text.replace(/[«»"']/g, '').replace(/\s+/g, ' ').trim().toLowerCase()
@@ -154,12 +154,12 @@ const createPostWithImageAndUrl = async () => {
   // const sectionId = getNearestSectionId(currentElement)
   // const anchorUrl = `${window.location.origin}${route.path}${sectionId}`
 
-  const anchorUrl = getAnchorUrl()
+  const sourceUrl = getSourceUrl()
 
   // 4. Send to Clipboard / Web Share
   // const fullMessage = `Check out this Luther Quote:\n\n"${dataToZip.d}"\n\nView Image: ${imageUrl}`
 
-  const finalPost = `
+  const msgTemplate = `
 Check out this Luther Quote:
 
 «${dataToZip.d}» 
@@ -170,31 +170,32 @@ ${imageUrl}
 ---
 
 Source:
-${anchorUrl}
+${sourceUrl}
   `.trim()
 
   const source = 'Source:'
-  const post = finalPost.split(source)[0] + source
-  copy(finalPost) // copy(anchorUrl)
+  const text = msgTemplate.split(source)[0] + source
+  copy(msgTemplate) // make the text available if navigator.share fails
 
   // 4. Send to Clipboard / Web Share
-  if (navigator.share) {
+  if (isMobile && navigator.share) {
     try {
       await navigator.share({
         title: 'Shared Luther Quote',
-        text: `${post}`, // « »
-        url: anchorUrl // This link contains the compressed data
+        text: `${text}`, // « » // text property do not exist on pc
+        url: sourceUrl // Hashtag link with the parent header of the quote
       })
     } catch (err) {
       console.log('Share cancelled or failed', err)
     }
   } else {
     // Fallback for PC: Copy to Clipboard
-    await navigator.clipboard.writeText(finalPost)
+    await navigator.clipboard.writeText(msgTemplate)
     toast.add({ title: 'Copied Post!', description: 'Past (quote & links to image and source) from clipboard to Post' })
   }
 }
 
+// Showing this options only with a share icon
 const shareUrlOfZipImage = async () => {
   // 1. Gather the data exactly as the Editor sees it
   const dataToZip = {
@@ -236,6 +237,44 @@ const shareUrlOfZipImage = async () => {
     await navigator.clipboard.writeText(imageUrl)
     toast.add({ title: 'Link Copied!', description: 'Ready to paste in your browser.' })
   }
+}
+
+// Replace the right "SHARE IMAGE"-button with "DOWNLOAD IMG"-button
+const downloadImage = async () => {
+
+  // THIS IS THE SAME CODE AS ABOVE IN THE FUNCTION shareUrlOfZipImage
+  // 1. Gather the data exactly as the Editor sees it
+  const dataToZip = {
+    h: imageData.value.content.h,
+    t: imageData.value.content.t,
+    d: imageData.value.content.d
+  }
+  // 2. Zip it for a "Lean" Social Media URL
+  const z = LZString.compressToEncodedURIComponent(JSON.stringify(dataToZip))
+  // 3. Build the Image URL
+  // We match your width/height logic from openPreview
+  const isMobile = imageData.value.layout === 'Narrow'
+  const wx = isMobile ? 720 : 1200
+  const hy = isMobile ? 1280 : 630
+  // Old syntax - const imageUrl = `${window.location.origin}/__og-image__/image${route.path}/og.png?z=${z}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
+  // RENOVATION: Convert to the modern comma-separated path format, passing 'z' as a path parameter
+  const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${z},w_${wx},h_${hy}.png`
+
+  // THE DOWNLOAD CODING
+  const response = await fetch(imageUrl)
+  const blob = await response.blob()
+  const blobUrl = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = blobUrl
+
+  const uniqueId = `${Date.now()}` // `${Date.now()}-${Math.floor(Math.random() * 10000)}`
+  link.download = `luther-quote-${imageData.value.layout.toLowerCase()}-${uniqueId}.png`
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(blobUrl)
 }
 
 /* ------------- NOTE OVERVIEW --------------- */
@@ -529,14 +568,14 @@ function onNoteSelect(item) {
         </UButton>
 
         <UButton
-          title="Share - Get URL (Link) to the Image"
-          :trailing-icon="copied ? 'i-lucide:copy-check' : 'i-heroicons:share'"
+          title="Download - Saving URL Image"
+          :trailing-icon="copied ? 'i-lucide:copy-check' : 'i-lucide:download'"
           color="primary"
           class="flex-1 py-2 flex flex-col items-center justify-center gap-1"
-          @click="shareUrlOfZipImage"
+          @click="downloadImage"
         >
           <span class="text-xs font-medium uppercase tracking-wider">
-            Share Image
+            Download Img
           </span>
         </UButton>
       </div>
