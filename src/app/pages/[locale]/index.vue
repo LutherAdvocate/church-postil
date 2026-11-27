@@ -29,8 +29,9 @@ useSeoMeta({
 })
 
 defineOgImage('Root', {
-  title: 'Luther\'s Church Postil',
-  description: 'Luther\'s Best book in the best web-app available on internet per 2026',
+  headline: 'Luther\'s Church Postil',
+  title: 'For Luther Students',
+  description: 'With a lot of Study Tools and Share Options',
 })
 
 /*

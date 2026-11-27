@@ -1,9 +1,119 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
+const route = useRoute()
+
 const props = defineProps<{
-  headline?: string
   title: string
   description?: string
+  headline?: string
 }>()
+
+// 1. Fetch the markdown page on the server (replace 'content' if your collection has a different name)
+const { data: page } = await useAsyncData(`og-header-${route.path}-${route.query.h}`, () =>
+  queryCollection('docs').path(route.path).first()
+)
+
+interface AstHeading {
+  level: number
+  spanIds: string[]
+  text: string
+}
+
+// 2. Helper to extract text and any inner <span id="h..."> IDs from Nuxt Content v3 (Minimark) or v2 AST
+const parseHeadingNode = (node: any): AstHeading | null => {
+  // Nuxt Content v3 Minimark format: ['h4', { id: '...' }, ...children]
+  if (Array.isArray(node) && typeof node[0] === 'string' && /^h[1-6]$/i.test(node[0])) {
+    const level = Number(node[0].slice(1))
+    const spanIds: string[] = []
+
+    const walk = (n: any): string => {
+      if (typeof n === 'string') return n
+      if (Array.isArray(n)) {
+        const [tag, attrs, ...children] = n
+        if (tag === 'span' && attrs?.id) spanIds.push(String(attrs.id))
+        return children.map(walk).join('')
+      }
+      return ''
+    }
+
+    return { level, spanIds, text: node.slice(2).map(walk).join('').trim() }
+  }
+
+  // Nuxt Content v2 Object AST format: { tag: 'h4', props: { id: '...' }, children: [...] }
+  if (node && typeof node === 'object' && typeof node.tag === 'string' && /^h[1-6]$/i.test(node.tag)) {
+    const level = Number(node.tag.slice(1))
+    const spanIds: string[] = []
+
+    const walk = (n: any): string => {
+      if (typeof n === 'string') return n
+      if (n?.type === 'text') return n.value || ''
+      if (n?.tag === 'span' && n?.props?.id) spanIds.push(String(n.props.id))
+      return Array.isArray(n?.children) ? n.children.map(walk).join('') : ''
+    }
+
+    return { level, spanIds, text: walk(node).trim() }
+  }
+
+  return null
+}
+
+// 3. Collect all headings in document order, find target (e.g. 'h47'), and walk backwards for h3 & h2
+const hierarchy = computed(() => {
+  const hParam = route.query.h ? String(route.query.h).replace(/^h/i, '') : ''
+  if (!hParam || !page.value?.body) return null
+
+  const targetId = `h${hParam}`
+  const allHeadings: AstHeading[] = []
+
+  const collectHeadings = (node: any) => {
+    if (!node) return
+    const heading = parseHeadingNode(node)
+    if (heading) {
+      allHeadings.push(heading)
+      return
+    }
+    if (Array.isArray(node)) {
+      node.forEach(collectHeadings)
+    } else if (typeof node === 'object') {
+      if (Array.isArray(node.children)) node.children.forEach(collectHeadings)
+      if (Array.isArray(node.value)) node.value.forEach(collectHeadings)
+    }
+  }
+
+  collectHeadings(page.value.body)
+
+  const startIndex = allHeadings.findIndex((h) => h.spanIds.includes(targetId))
+  if (startIndex === -1) return null
+
+  const clickedHeading = allHeadings[startIndex]
+  let parentTitle = ''
+  let grandHeadline = ''
+  let expectedLevel = clickedHeading.level - 1
+
+  for (let i = startIndex - 1; i >= 0; i--) {
+    const h = allHeadings[i]
+    if (h.level <= expectedLevel) {
+      if (!parentTitle) {
+        parentTitle = h.text
+        expectedLevel = h.level - 1
+      } else if (!grandHeadline) {
+        grandHeadline = h.text
+        break
+      }
+    }
+  }
+
+  return {
+    headline: grandHeadline,      // e.g. h2
+    title: parentTitle,           // e.g. h3
+    description: clickedHeading.text // e.g. h4 (<span id="h47">)
+  }
+})
+
+// 4. Bind to your template with clean fallbacks
+const displayHeadline = computed(() => hierarchy.value?.headline || props.headline || "Luther's Church Postil")
+const displayTitle = computed(() => hierarchy.value?.title || props.title)
+const displayDescription = computed(() => hierarchy.value?.description || props.description || 'Tap to jump to this section →')
 </script>
 
 <template>
@@ -47,21 +157,25 @@ const props = defineProps<{
       </svg>
     </div>
 
-    <!-- Centered content -->
-    <div class="relative z-10 flex flex-col items-center text-center">
-      <p class="uppercase text-[34px] text-[#00DC82] mb-4 font-bold">
-        {{ props.headline || "Luther's Church Postil" }}
+    <!-- Centered content safe for both Messenger square thumbnail and 1200x630 wide banner -->
+    <div class="px-16 relative z-10 flex flex-col items-center text-center">
+      <!-- h2 (Sermon / Sunday) -->
+      <p class="uppercase text-[30px] text-[#00DC82] mb-4 font-bold max-w-[950px] line-clamp-2">
+        {{ displayHeadline }}
       </p>
 
-      <h1 class="text-[58px] font-bold leading-tight mb-10 text-white max-w-[1000px]">
-        {{ props.title }}
+      <!-- h3 (Main section) -->
+      <h1 class="text-[52px] font-bold leading-tight mb-8 text-white max-w-[980px] line-clamp-2">
+        {{ displayTitle }}
       </h1>
 
-      <div class="border-l-4 border-[#00DC82] pl-6 py-2">
-        <p class="text-[38px] font-semibold text-[#00DC82]">
-          {{ props.description || 'Tap to jump to this section →' }}
+      <!-- h4 / Verse (Centered with subtle border so it stays inside Messenger's 630x630 center crop) -->
+      <div class="border-l-4 border-[#00DC82] pl-6 py-2 max-w-[920px] text-left">
+        <p class="text-[34px] leading-snug font-semibold text-[#00DC82] line-clamp-3">
+          {{ displayDescription }}
         </p>
       </div>
     </div>
+    <!-- END OF OG-IMAGE COMPONENT HEADERLINK -->
   </div>
 </template>

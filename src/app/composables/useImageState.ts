@@ -72,7 +72,7 @@ export const useImageState = () => {
     const imageUrl = `${window.location.origin}/_og/d/c_${imageData.value.layout},zip_${compressed},w_${wx},h_${hy}.png`
 
     // 4. Build the "Backlink" — ALSO COMPRESSED!
-    const shareUrl = `${originPath}?v=${compressed}`
+    const shareUrl = `${originPath}?z=${compressed}`
 
     return { imageUrl, shareUrl, fullText: imageData.value.content.d }
   }

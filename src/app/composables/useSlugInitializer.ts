@@ -29,8 +29,8 @@ export const useSlugInitializer = () => {
 
   const handleRouteLogic = () => {
 
-    // --- PAYLOAD TYPE 1: UNZIPPING (?v=...) ---
-    if (route.query.v) {
+    // --- PAYLOAD TYPE 1: UNZIPPING (?z=...) ---
+    if (route.query.z) {
       // const zipped = route.query.v as string
       console.log('unzipping')
       const unzipped = JSON.parse(LZString.decompressFromEncodedURIComponent(route.query.v as string))

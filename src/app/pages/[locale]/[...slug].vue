@@ -74,16 +74,16 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-const layout = useOgRouteState()
+const {layout, headerMeta } = useOgRouteState(page.value?.body)
 
 // const config = useRuntimeConfig() // siteUrl or apiBase
 const site = useSiteConfig() // required for og-image
 
 useSeoMeta({
-  title: () => sData?.t || page.value?.title, // This title comes below the shared image - I don't want to have the same title in image and below it
-  ogTitle: () => sData?.t || page.value?.title, // route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
-  description: () => sData?.d || page.value?.description,
-  ogDescription: () => sData?.d || page.value?.description, // route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
+  title: () => headerMeta?.title || sData?.t || page.value?.title, // This title comes below the shared image - I don't want to have the same title in image and below it
+  ogTitle: () => headerMeta?.title || sData?.t || page.value?.title, // route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
+  description: () => headerMeta?.description || sData?.d || page.value?.description,
+  ogDescription: () => headerMeta?.description || sData?.d || page.value?.description, // route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
   ogUrl: () => `${site.url}${route.fullPath}` // route.path
   /*
   ogImage: quoteData // isAnchorLink.value
@@ -93,6 +93,7 @@ useSeoMeta({
 })
 
 console.log('🖼️ OG Image Input:', {
+  headerMeta,
   layout,
   sData,
   editorContent: imageData.value.content,
@@ -110,9 +111,9 @@ const shortDescription = sData?.d
   : (imageData.value.content.d || page.value.description)
 
 defineOgImage(layout, {
-    title: sData?.t || imageData.value.content.t || page.value.title,
-    description: shortDescription, // sData?.d || imageData.value.content.d || page.value.description,
-    headline: sData?.h || imageData.value.content.h || headline.value,
+    title: headerMeta?.title || sData?.t || imageData.value.content.t || page.value.title,
+    description: headerMeta?.description || shortDescription, // sData?.d || imageData.value.content.d || page.value.description,
+    headline: headerMeta?.headline || sData?.h || imageData.value.content.h || headline.value,
     zip: route.query.zip || route.params.zip as any
   }
 )
