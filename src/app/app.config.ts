@@ -63,7 +63,8 @@ export default defineAppConfig({
 
   },
   seo: {
-    siteName: 'Church Postil'
+    siteName: 'Church Postil',
+    OG_VERSION: '0.1'
   },
   header: {
     slot: { root: 'relative top-auto z-60' },

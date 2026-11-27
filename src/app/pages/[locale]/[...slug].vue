@@ -74,22 +74,17 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-const {layout, headerMeta } = useOgRouteState(page.value?.body)
+const {layout, headerMeta, ogUrl } = useOgRouteState(page.value?.body)
 
 // const config = useRuntimeConfig() // siteUrl or apiBase
-const site = useSiteConfig() // required for og-image
+// const site = useSiteConfig() // required for og-image
 
 useSeoMeta({
   title: () => headerMeta?.title || sData?.t || page.value?.title, // This title comes below the shared image - I don't want to have the same title in image and below it
   ogTitle: () => headerMeta?.title || sData?.t || page.value?.title, // route.path.startsWith('/en') ? 'Luther\'s Church Postil' : 'Luthers Kirke Postille', // page?.value?.title,
   description: () => headerMeta?.description || sData?.d || page.value?.description,
   ogDescription: () => headerMeta?.description || sData?.d || page.value?.description, // route.query.s ? (locale.value === 'en' ? 'Read this quote from Luther...' : 'Les dette sitatet fra Luther...') : page?.value?.description,
-  ogUrl: () => `${site.url}${route.fullPath}` // route.path
-  /*
-  ogImage: quoteData // isAnchorLink.value
-    ? undefined // Let the OG Module handle it otherwise
-    : '/default-social-card.png' // A static image for urls with only the id instead of the section header title
-  */
+  ogUrl: () => ogUrl // `${site.url}${route.fullPath}` // route.path
 })
 
 console.log('🖼️ OG Image Input:', {

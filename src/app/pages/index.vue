@@ -29,14 +29,17 @@ if (!page.value) {
 const title = page.value.seo?.title || page.value.title
 const description = page.value.seo?.description || page.value.description
 
+const { ogUrl } = useOgRouteState(page.value?.body)
+
 useSeoMeta({
   titleTemplate: '',
   title,
   ogTitle: title,
   description,
   ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/docs-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/docs-light.png'
+  ogUrl: () => ogUrl
+  // ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/docs-light.png',
+  // twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/docs-light.png'
 })
 
 defineOgImage('Root', {

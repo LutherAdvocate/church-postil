@@ -1,16 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // composables/useOgRouteState.ts
-export const OG_VERSION = '1'
 
 export const useOgRouteState = (pageBody?: any) => {
+  const { seo } = useAppConfig()
   const route = useRoute()
   const router = useRouter()
+  const site = useSiteConfig()
 
   // Add ?v=1 on /en pages OR any page not starting with /da (e.g. root '/') when no other query params exist
   // const isTargetPath = route.path.startsWith('/en') || !route.path.startsWith('/da') // const isNotDanish = !route.path.startsWith('/da')
 
-  if (import.meta.client && route.path.length < 20 && Object.keys(route.query).length === 0) {
-    router.replace({ query: { v: OG_VERSION } })
+  // Build ogUrl on the server so Facebook caches by ?v=0.1 even if the user pasted a bare short URL
+  const ogUrl =
+     Object.keys(route.query).length === 0
+      ? `${site.url}${route.path}?v=${seo.OG_VERSION}` // ${seo.OG_VERSION}
+      : `${site.url}${route.fullPath}`
+
+  // Updating browsers URL to include OG_VERSION of og-image
+  if (import.meta.client && Object.keys(route.query).length === 0) {
+    router.replace({ query: { v: String(seo.OG_VERSION) } })
   }
 
   const { imageData } = useImageState()
@@ -138,36 +146,5 @@ export const useOgRouteState = (pageBody?: any) => {
     }
   }
 
-  return { layout, headerMeta }
+  return { layout, headerMeta, ogUrl }
 }
-
-/* First solution 
-export const useOgRouteState = () => {
-  const route = useRoute()
-  const { imageData } = useImageState()
-
-  // 1. Set imageData.value.layout from route query parameters
-  if (route.query.c === 'Wide' || route.query.c === 'Narrow' || route.query.c === 'QuoteLink') {
-    imageData.value.layout = route.query.c
-  } else if (route.query.h) {
-    imageData.value.layout = 'HeaderLink'
-  } else if (route.query.s) {
-    imageData.value.layout = 'QuoteLink'
-  }
-
-  // 2. Return the strictly typed layout for defineOgImage()
-  type OgLayout = Parameters<typeof defineOgImage>[0]
-
-  const layout: OgLayout = (
-    imageData.value.layout === 'Wide'
-      ? 'Wide'
-      : imageData.value.layout === 'Narrow'
-        ? 'Narrow'
-        : imageData.value.layout === 'HeaderLink'
-          ? 'HeaderLink'
-          : 'QuoteLink'
-  ) as OgLayout
-
-  return layout
-}
-*/
