@@ -44,11 +44,15 @@ export const useSlugInitializer = () => {
     // --- PAYLOAD TYPE 2.1: EVENTUAL SHARED HEADERS (?h=...) ---
     if (route.query.h) {
       const targetId = `h${String(route.query.h).replace(/^h/i, '')}`
+      console.log('targetId= ', targetId)
       const el = document.getElementById(targetId)
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const headerEl = el.closest('h1, h2, h3, h4, h5, h6') || el
+        console.log()
+        headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }
+
 
     // --- PAYLOAD TYPE 2.2: DECOMPRESS & HIGHLIGHT SEARCH (?s=...) ---
     const s = route.query.s as string
@@ -161,7 +165,8 @@ export const useSlugInitializer = () => {
       }, 50)
     } else if (route.hash.length === 0 // NO HASH here
       && !fullUrl.includes('#:~:text=')
-      && !(route.query.s || sectionId)) {
+      && !(route.query.s || sectionId)
+      && !(route.query.h)) {
       // Before this code the page opened in the bottom view
       console.log('if3 no hash or query')
       window.scrollTo({

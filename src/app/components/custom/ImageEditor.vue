@@ -172,12 +172,13 @@ const createPostWithImageAndUrl = async () => {
   // const anchorUrl = `${window.location.origin}${route.path}${sectionId}`
 
   const headlineHasUrl = computed(() =>
-    (imageData.value.content.h || '').toLowerCase().includes('church-postil.vercel.app')
+    (imageData.value.content.h || '').includes(window.location.host) // (imageData.value.content.h || '').toLowerCase().includes('church-postil.vercel.app')
   )
 
   const getHeadline = () => {
+    const isHttp = window.location.origin.includes('localhost') ? 'http' : 'https'
     const cleanHostAndPath = (imageData.value.content.h || '').trim().replace(/^https?:\/\//i, '')
-    return `https://${cleanHostAndPath}`
+    return `${isHttp}://${cleanHostAndPath}`
   }
 
   const sourceUrl = headlineHasUrl.value ? getHeadline() : getSourceUrl()

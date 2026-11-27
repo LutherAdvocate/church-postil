@@ -54,11 +54,6 @@ const handleShareClick = () => {
 
   // 2. We grab the text of the header we clicked DIRECTLY from the screen
   const clickedHeaderText = targetElement.innerText.replace('#', '').trim()
-  // 3. Send the data to your Image Editor
-
-  imageData.value.content.h = headlineT.value
-  imageData.value.content.t = breadcrumbString
-  imageData.value.content.d = clickedHeaderText
 
   // Grab the inner span ID (e.g. 'h3151') first, falling back to props.id
   const innerSpanId = targetElement.querySelector('span[id]')?.id || props.id
@@ -66,16 +61,22 @@ const handleShareClick = () => {
 
   // Minimal URL without #hash (your client script will scroll to #h3151 from ?h=3151)
   const route = useRoute()
-  const host = window.location.origin.includes('localhost') ? 'https://church-postil.vercel.app' : window.location.origin
-  const fullUrl = `${host}${route.path}?h=${hNumber}`
+  // const host = window.location.origin.includes('localhost') ? 'https://church-postil.vercel.app' : window.location.origin
+  const fullUrl = `${window.location.origin}${route.path}?h=${hNumber}`
   const displayUrl = fullUrl.replace(/^https?:\/\//, '') // e.g. church-postil.vercel.app/en/christmas?h=3151
 
-  copy(displayUrl)
+  copy(fullUrl)
+  const ctxTitle = imageData.value.pageContext.title // ctx.title gives page title etc. then we also have ctx.description and ctx.path
+
+  // 3. Send the data to your Image Editor
+  imageData.value.content.h = route.path.startsWith("/en") ? displayUrl : headlineT.value
+  imageData.value.content.t = route.path.startsWith("/en") ? breadcrumbString : ctxTitle
+  imageData.value.content.d = clickedHeaderText || 'Clicked H el.'
 
   openEditor({
-    h: displayUrl,
-    t: breadcrumbString,
-    d: clickedHeaderText || 'Clicked H el.'
+    h: imageData.value.content.h,
+    t: imageData.value.content.t,
+    d: imageData.value.content.d
   })
 }
 

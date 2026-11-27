@@ -545,13 +545,10 @@ const sharePageLinkWithQuote = async (note) => {
   const wx = isMobile ? 720 : 1200
   const hy = isMobile ? 1280 : 630
 
+  imageData.value.layout = 'QuoteLink'
+
   // Old pageUrl:   const pageUrl = `${window.location.origin}${route.path}?s=${s}&component=${imageData.value.layout}&width=${wx}&height=${hy}`
-
-  imageData.value.layout = 'QuoteLink'
-
   const pageUrl = `${window.location.origin}${route.path}?s=${s}&c=${imageData.value.layout}&w=${wx}&h=${hy}`
-
-  imageData.value.layout = 'QuoteLink'
 
   const msgTemplate = `Check out this Luther Quote:
 
@@ -584,12 +581,15 @@ const sharePageLinkWithQuote = async (note) => {
     })
   }
 }
+imageData.value.content.h = ctx.path.startsWith("/en") ? ctx.title : props.headline
+imageData.value.content.t = ctx.path.startsWith("/en") ? props.urlAsText : ctx.title // The "Parents" go here - if shared header c.f. /component/content/ProseHeaderBase.vue
 
 const openImageEditorWithNote = (note) => {
+  imageData.value.content.d = note.text || 'Note' // The "Clicked Header" goes here - if shared header
   openEditor({
-    h: ctx.path.startsWith("/en") ? ctx.title : props.headline,
-    t: ctx.path.startsWith("/en") ? props.urlAsText : ctx.title, // The "Parents" go here - if shared header
-    d: note.text || 'Note' // The "Clicked Header" goes here - if shared header
+    h: imageData.value.content.h,
+    t: imageData.value.content.t,
+    d: imageData.value.content.d
   })
 }
 </script>
