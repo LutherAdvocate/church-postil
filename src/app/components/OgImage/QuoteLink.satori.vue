@@ -97,21 +97,22 @@ const cta = computed(() => {
       </svg>
     </div>
 
-    <!-- HARMONIZED TYPOGRAPHY (larger for Messenger thumbnail legibility) -->
-    <div class="pl-[100px] relative z-10 flex flex-col items-start">
-      <p class="uppercase text-[28px] text-[#00DC82] mb-3 font-semibold">
+    <!-- HARMONIZED TYPOGRAPHY (larger + centered for Messenger thumbnail & wide card) -->
+    <div class="px-16 relative z-10 flex flex-col items-center text-center">
+      <p class="uppercase text-[36px] text-[#00DC82] mb-4 font-bold">
         {{ h }}
       </p>
 
-      <h1 class="ml-5 text-[48px] font-bold leading-tight mb-10 text-white max-w-[850px]">
+      <h1 class="text-[64px] font-bold leading-tight mb-10 text-white max-w-[1000px]">
         {{ t }}
       </h1>
 
-      <div class="ml-[80px] border-l-4 border-[#00DC82] pl-5 py-2">
-        <p class="text-[32px] font-semibold text-[#00DC82]">
+      <div class="border-l-4 border-[#00DC82] pl-6 py-2">
+        <p class="text-[42px] font-semibold text-[#00DC82]">
           {{ cta }}
         </p>
       </div>
     </div>
+    <!-- END OF OG-IMAGE COMPONENT QUOTELINK -->
   </div>
 </template>

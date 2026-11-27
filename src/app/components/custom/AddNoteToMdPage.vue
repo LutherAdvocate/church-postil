@@ -542,8 +542,8 @@ const sharePageLinkWithQuote = async (note) => {
   // 3. Build the Image URL
   // We match your width/height logic from openPreview
   const isMobile = imageData.value.layout === 'Narrow'
-  const wx = isMobile ? 720 : 1200
-  const hy = isMobile ? 1280 : 630
+  const wx = 1200 // isMobile ? 720 : 1200
+  const hy = 630 // isMobile ? 1280 : 630
 
   imageData.value.layout = 'QuoteLink'
 

@@ -74,16 +74,7 @@ if (route.query.s) {
 
 const headline = computed(() => findPageHeadline(navigation?.value, page.value?.path)) as any
 
-type OgLayout = Parameters<typeof defineOgImage>[0]
-
-const layout: OgLayout = (
-  imageData.value.layout === 'Wide'
-    ? 'Wide'
-    : imageData.value.layout === 'Narrow'
-      ? 'Narrow'
-      : 'QuoteLink'
-) as OgLayout
-
+const layout = useOgRouteState()
 
 // const config = useRuntimeConfig() // siteUrl or apiBase
 const site = useSiteConfig() // required for og-image
